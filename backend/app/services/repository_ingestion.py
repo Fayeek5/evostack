@@ -1,31 +1,32 @@
-import os
-import tempfile
 import shutil
-from git import Repo, GitCommandError
+import tempfile
+from git import Repo
 
 
 class RepositoryIngestionService:
-    def __init__(self, clone_path):
-        self.clone_path = clone_path
+    def __init__(self, clone_path=None):
+        self.clone_path = clone_path or tempfile.mkdtemp()
 
-    def clone_repository(self, repo_url, branch="master"):
+    def clone_repository(self, repo_url, branch=None):
         try:
-            temp_dir = tempfile.gettempdir()
+            if branch:
+                Repo.clone_from(
+                    repo_url,
+                    self.clone_path,
+                    branch=branch
+                )
+            else:
+                Repo.clone_from(
+                    repo_url,
+                    self.clone_path
+                )
 
-            clone_path = os.path.join(temp_dir, self.clone_path)
+            return self.clone_path
 
-            if os.path.exists(clone_path):
-                shutil.rmtree(clone_path)
-
-            Repo.clone_from(
-                repo_url,
-                clone_path,
-                branch=branch
-            )
-
-            return clone_path
-
-        except GitCommandError as e:
+        except Exception as e:
             raise Exception(
-                f"Failed to clone repository from {repo_url}: {e}"
+                f"Failed to clone repository from {repo_url}: {str(e)}"
             )
+
+    def cleanup(self):
+        shutil.rmtree(self.clone_path, ignore_errors=True)
