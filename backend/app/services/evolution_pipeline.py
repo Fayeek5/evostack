@@ -12,7 +12,7 @@ from .recommendation_engine import generate_recommendations
 
 
 class EvolutionPipeline:
-    def __init__(self, clone_path):
+    def __init__(self, clone_path=None):
         self.clone_path = clone_path
 
     async def run(self, repo_url, branch=None):
