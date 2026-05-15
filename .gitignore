@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Node
+node_modules/
+.next/
+out/
+
+# OS
+.DS_Store
+
+# Temporary
+temp_repo_dir/
+tmp/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env.local
+.env.production
+
+# Build
+dist/
+build/

@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+redis
+pydantic-settings
+gitpython
+tree-sitter
+semgrep
+celery
+python-dotenv
+python-multipart
+httpx
+aiofiles
