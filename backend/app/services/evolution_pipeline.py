@@ -1,7 +1,7 @@
 from backend.app.intelligence.complexity_engine import analyze_complexity
 from backend.app.intelligence.dependency_engine import analyze_dependencies
 from backend.app.intelligence.ast_parser import analyze_semantics
-from backend.app.intelligence.architecture_engine import analyze_architecture
+from backend.app.intelligence.architecture_engine import detect_architecture
 
 import asyncio
 
