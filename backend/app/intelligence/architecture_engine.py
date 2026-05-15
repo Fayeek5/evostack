@@ -1,3 +1,12 @@
+
+PRIORITY_DIRECTORIES = [
+    "src",
+    "app",
+    "backend",
+    "frontend",
+    "api",
+    "services",
+]
 from pathlib import Path
 import json
 from collections import Counter
