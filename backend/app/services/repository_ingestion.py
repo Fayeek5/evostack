@@ -4,8 +4,8 @@ from git import Repo
 
 
 class RepositoryIngestionService:
-    def __init__(self, clone_path=None):
-        self.clone_path = clone_path or tempfile.mkdtemp()
+    def __init__(self):
+        self.clone_path = tempfile.mkdtemp(prefix="evostack_repo_")
 
     def clone_repository(self, repo_url, branch=None):
         try:

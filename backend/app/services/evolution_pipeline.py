@@ -1,9 +1,9 @@
+import asyncio
+
 from backend.app.intelligence.complexity_engine import analyze_complexity
 from backend.app.intelligence.dependency_engine import analyze_dependencies
-from backend.app.intelligence.ast_parser import analyze_semantics
+from backend.app.intelligence.semantic_engine import analyze_semantics
 from backend.app.intelligence.architecture_engine import detect_architecture
-
-import asyncio
 
 from .repository_ingestion import RepositoryIngestionService
 from .repository_analysis import RepositoryAnalyzer
@@ -16,9 +16,7 @@ class EvolutionPipeline:
         self.clone_path = clone_path
 
     async def run(self, repo_url, branch=None):
-        ingestion_service = RepositoryIngestionService(
-            self.clone_path
-        )
+        ingestion_service = RepositoryIngestionService()
 
         cloned_repo_path = await asyncio.to_thread(
             ingestion_service.clone_repository,
@@ -26,29 +24,17 @@ class EvolutionPipeline:
             branch
         )
 
-        analyzer = RepositoryAnalyzer(
-            cloned_repo_path
-        )
+        analyzer = RepositoryAnalyzer(cloned_repo_path)
 
         analysis_results = await analyzer.analyze()
 
-        complexity_results = analyze_complexity(
-            cloned_repo_path
-        )
+        complexity_results = analyze_complexity(cloned_repo_path)
 
-        dependency_results = analyze_dependencies(
-            cloned_repo_path
-        )
+        dependency_results = analyze_dependencies(cloned_repo_path)
 
-        semantic_results = analyze_semantics(
-            cloned_repo_path
-        )
+        semantic_results = analyze_semantics(cloned_repo_path)
 
-        architecture_results = detect_architecture(
-            cloned_repo_path,
-            semantic_results,
-            dependency_results
-        )
+        architecture_analysis = detect_architecture(cloned_repo_path)
 
         health_score = calculate_health_score(
             complexity_results,
@@ -62,6 +48,8 @@ class EvolutionPipeline:
             health_score
         )
 
+        ingestion_service.cleanup()
+
         return {
             "repo_url": repo_url,
             "branch": branch,
@@ -70,7 +58,6 @@ class EvolutionPipeline:
             "dependency_analysis": dependency_results,
             "semantic_analysis": semantic_results,
             "architecture_analysis": architecture_analysis,
-            "architecture_analysis": architecture_results,
             "health_score": health_score,
             "recommendations": recommendations
         }
