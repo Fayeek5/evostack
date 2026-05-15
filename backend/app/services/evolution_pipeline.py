@@ -15,7 +15,7 @@ class EvolutionPipeline:
     def __init__(self, clone_path):
         self.clone_path = clone_path
 
-    async def run(self, repo_url, branch="main"):
+    async def run(self, repo_url, branch=None):
         ingestion_service = RepositoryIngestionService(
             self.clone_path
         )
