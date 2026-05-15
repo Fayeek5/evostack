@@ -1,99 +1,97 @@
 from pathlib import Path
+import json
 
 
-def analyze_architecture(
-    repo_path,
-    semantic_analysis,
-    dependency_analysis
-):
+def detect_architecture(repo_path: str):
     repo = Path(repo_path)
 
-    frameworks = []
-
-    python_files = list(repo.rglob("*.py"))
-    js_files = list(repo.rglob("*.js"))
-    ts_files = list(repo.rglob("*.ts"))
-    jsx_files = list(repo.rglob("*.jsx"))
-    tsx_files = list(repo.rglob("*.tsx"))
-
-    total_files = (
-        len(python_files)
-        + len(js_files)
-        + len(ts_files)
-        + len(jsx_files)
-        + len(tsx_files)
-    )
-
-    async_functions = semantic_analysis.get(
-        "async_functions",
-        0
-    )
-
-    if python_files:
-        primary_language = "Python"
-
-    elif ts_files or tsx_files:
-        primary_language = "TypeScript"
-
-    elif js_files or jsx_files:
-        primary_language = "JavaScript"
-
-    else:
-        primary_language = "Unknown"
-
-    all_files = list(repo.rglob("*"))
-
-    for file in all_files:
-        filename = file.name.lower()
-
-        if "fastapi" in filename:
-            frameworks.append("FastAPI")
-
-        if "django" in filename:
-            frameworks.append("Django")
-
-        if "package.json" == filename:
-            frameworks.append("Node.js")
-
-        if "requirements.txt" == filename:
-            frameworks.append("Python Environment")
-
-    frameworks = list(set(frameworks))
-
-    if async_functions > 100:
-        architecture_style = (
-            "Async Service Architecture"
-        )
-
-    else:
-        architecture_style = (
-            "Standard Application Architecture"
-        )
-
-    test_files = [
-        file for file in all_files
-        if "test" in file.name.lower()
-    ]
-
-    testing_density = (
-        "High"
-        if len(test_files) > total_files * 0.2
-        else "Moderate"
-    )
-
-    if python_files and async_functions > 100:
-        repository_type = "Backend API"
-
-    elif tsx_files or jsx_files:
-        repository_type = "Frontend Application"
-
-    else:
-        repository_type = "General Software Project"
-
-    return {
-        "primary_language": primary_language,
-        "repository_type": repository_type,
-        "frameworks_detected": frameworks,
-        "architecture_style": architecture_style,
-        "testing_density": testing_density
+    detected = {
+        "repository_type": "General Software Project",
+        "primary_language": "Unknown",
+        "architecture_style": "Standard Application Architecture",
+        "frameworks": [],
+        "testing_density": "Low"
     }
+
+    package_json = list(repo.rglob("package.json"))
+    requirements = list(repo.rglob("requirements.txt"))
+    docker_files = list(repo.rglob("Dockerfile"))
+
+    # ------------------------
+    # NODE / TYPESCRIPT DETECTION
+    # ------------------------
+
+    if package_json:
+        detected["primary_language"] = "TypeScript/JavaScript"
+
+        for pkg in package_json:
+            try:
+                data = json.loads(pkg.read_text())
+
+                deps = {
+                    **data.get("dependencies", {}),
+                    **data.get("devDependencies", {})
+                }
+
+                dep_keys = deps.keys()
+
+                if "next" in dep_keys:
+                    detected["frameworks"].append("Next.js")
+                    detected["repository_type"] = "Frontend Application"
+
+                if "react" in dep_keys:
+                    detected["frameworks"].append("React")
+
+                if "express" in dep_keys:
+                    detected["frameworks"].append("Express.js")
+                    detected["repository_type"] = "Backend API"
+
+                if "nestjs" in dep_keys:
+                    detected["frameworks"].append("NestJS")
+
+                if "typescript" in dep_keys:
+                    detected["primary_language"] = "TypeScript"
+
+                if "jest" in dep_keys:
+                    detected["testing_density"] = "High"
+
+            except:
+                pass
+
+    # ------------------------
+    # PYTHON DETECTION
+    # ------------------------
+
+    if requirements:
+        detected["primary_language"] = "Python"
+
+        for req in requirements:
+            try:
+                content = req.read_text().lower()
+
+                if "fastapi" in content:
+                    detected["frameworks"].append("FastAPI")
+                    detected["repository_type"] = "Backend API"
+
+                if "django" in content:
+                    detected["frameworks"].append("Django")
+
+                if "flask" in content:
+                    detected["frameworks"].append("Flask")
+
+                if "pytest" in content:
+                    detected["testing_density"] = "High"
+
+            except:
+                pass
+
+    # ------------------------
+    # INFRASTRUCTURE DETECTION
+    # ------------------------
+
+    if docker_files:
+        detected["frameworks"].append("Docker")
+
+    detected["frameworks"] = list(set(detected["frameworks"]))
+
+    return detected

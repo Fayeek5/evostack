@@ -69,6 +69,7 @@ class EvolutionPipeline:
             "complexity_analysis": complexity_results,
             "dependency_analysis": dependency_results,
             "semantic_analysis": semantic_results,
+            "architecture_analysis": architecture_analysis,
             "architecture_analysis": architecture_results,
             "health_score": health_score,
             "recommendations": recommendations
