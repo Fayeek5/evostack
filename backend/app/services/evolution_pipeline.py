@@ -44,7 +44,7 @@ class EvolutionPipeline:
             cloned_repo_path
         )
 
-        architecture_results = analyze_architecture(
+        architecture_results = detect_architecture(
             cloned_repo_path,
             semantic_results,
             dependency_results
