@@ -1,97 +1,208 @@
 from pathlib import Path
 import json
+from collections import Counter
+
+
+LANGUAGE_EXTENSIONS = {
+    ".py": "Python",
+    ".js": "JavaScript",
+    ".jsx": "React",
+    ".ts": "TypeScript",
+    ".tsx": "React TypeScript",
+    ".java": "Java",
+    ".go": "Go",
+    ".rs": "Rust",
+    ".php": "PHP",
+    ".rb": "Ruby",
+    ".cs": "C#",
+    ".cpp": "C++",
+    ".c": "C",
+    ".swift": "Swift",
+    ".kt": "Kotlin",
+    ".scala": "Scala",
+    ".yaml": "YAML",
+    ".yml": "YAML",
+    ".tf": "Terraform",
+    ".sh": "Shell",
+}
 
 
 def detect_architecture(repo_path: str):
     repo = Path(repo_path)
 
-    detected = {
-        "repository_type": "General Software Project",
-        "primary_language": "Unknown",
-        "architecture_style": "Standard Application Architecture",
-        "frameworks": [],
-        "testing_density": "Low"
+    languages = Counter()
+
+    frameworks = set()
+
+    ci_cd = set()
+
+    cloud = set()
+
+    infrastructure = set()
+
+    repository_type = "General Software Project"
+
+    # ------------------------
+    # LANGUAGE DETECTION
+    # ------------------------
+
+    for file_path in repo.rglob("*"):
+
+        if file_path.is_file():
+
+            ext = file_path.suffix.lower()
+
+            if ext in LANGUAGE_EXTENSIONS:
+                languages[LANGUAGE_EXTENSIONS[ext]] += 1
+
+            # Docker detection
+            if file_path.name == "Dockerfile":
+                infrastructure.add("Docker")
+
+            # GitHub Actions
+            if ".github/workflows" in str(file_path):
+                ci_cd.add("GitHub Actions")
+
+            # Kubernetes
+            if "k8s" in str(file_path).lower():
+                infrastructure.add("Kubernetes")
+
+            # Terraform
+            if ext == ".tf":
+                infrastructure.add("Terraform")
+
+    # ------------------------
+    # PACKAGE.JSON ANALYSIS
+    # ------------------------
+
+    package_json_files = list(repo.rglob("package.json"))
+
+    for pkg in package_json_files:
+
+        try:
+            data = json.loads(pkg.read_text())
+
+            deps = {
+                **data.get("dependencies", {}),
+                **data.get("devDependencies", {})
+            }
+
+            dep_keys = deps.keys()
+
+            if "next" in dep_keys:
+                frameworks.add("Next.js")
+
+            if "react" in dep_keys:
+                frameworks.add("React")
+
+            if "express" in dep_keys:
+                frameworks.add("Express.js")
+
+            if "nestjs" in dep_keys:
+                frameworks.add("NestJS")
+
+            if "vue" in dep_keys:
+                frameworks.add("Vue")
+
+            if "angular" in dep_keys:
+                frameworks.add("Angular")
+
+            if "vite" in dep_keys:
+                frameworks.add("Vite")
+
+            if "jest" in dep_keys:
+                frameworks.add("Jest")
+
+            if "tailwindcss" in dep_keys:
+                frameworks.add("TailwindCSS")
+
+        except:
+            pass
+
+    # ------------------------
+    # PYTHON REQUIREMENTS
+    # ------------------------
+
+    requirements_files = list(repo.rglob("requirements.txt"))
+
+    for req in requirements_files:
+
+        try:
+            content = req.read_text().lower()
+
+            if "fastapi" in content:
+                frameworks.add("FastAPI")
+
+            if "django" in content:
+                frameworks.add("Django")
+
+            if "flask" in content:
+                frameworks.add("Flask")
+
+            if "pytest" in content:
+                frameworks.add("Pytest")
+
+            if "celery" in content:
+                frameworks.add("Celery")
+
+        except:
+            pass
+
+    # ------------------------
+    # CLOUD DETECTION
+    # ------------------------
+
+    if list(repo.rglob("vercel.json")):
+        cloud.add("Vercel")
+
+    if list(repo.rglob("render.yaml")):
+        cloud.add("Render")
+
+    if list(repo.rglob("docker-compose.yml")):
+        infrastructure.add("Docker Compose")
+
+    # ------------------------
+    # REPOSITORY TYPE
+    # ------------------------
+
+    if "Next.js" in frameworks and "FastAPI" in frameworks:
+        repository_type = "Fullstack AI Platform"
+
+    elif "Next.js" in frameworks:
+        repository_type = "Frontend Application"
+
+    elif "FastAPI" in frameworks or "Express.js" in frameworks:
+        repository_type = "Backend API"
+
+    elif len(package_json_files) > 1:
+        repository_type = "Monorepo"
+
+    primary_language = (
+        languages.most_common(1)[0][0]
+        if languages
+        else "Unknown"
+    )
+
+    total_files = sum(languages.values())
+
+    language_distribution = {}
+
+    for lang, count in languages.items():
+
+        percentage = (
+            round((count / total_files) * 100, 2)
+            if total_files > 0
+            else 0
+        )
+
+        language_distribution[lang] = percentage
+
+    return {
+        "repository_type": repository_type,
+        "primary_language": primary_language,
+        "languages": language_distribution,
+        "frameworks": sorted(list(frameworks)),
+        "ci_cd": sorted(list(ci_cd)),
+        "cloud": sorted(list(cloud)),
+        "infrastructure": sorted(list(infrastructure))
     }
-
-    package_json = list(repo.rglob("package.json"))
-    requirements = list(repo.rglob("requirements.txt"))
-    docker_files = list(repo.rglob("Dockerfile"))
-
-    # ------------------------
-    # NODE / TYPESCRIPT DETECTION
-    # ------------------------
-
-    if package_json:
-        detected["primary_language"] = "TypeScript/JavaScript"
-
-        for pkg in package_json:
-            try:
-                data = json.loads(pkg.read_text())
-
-                deps = {
-                    **data.get("dependencies", {}),
-                    **data.get("devDependencies", {})
-                }
-
-                dep_keys = deps.keys()
-
-                if "next" in dep_keys:
-                    detected["frameworks"].append("Next.js")
-                    detected["repository_type"] = "Frontend Application"
-
-                if "react" in dep_keys:
-                    detected["frameworks"].append("React")
-
-                if "express" in dep_keys:
-                    detected["frameworks"].append("Express.js")
-                    detected["repository_type"] = "Backend API"
-
-                if "nestjs" in dep_keys:
-                    detected["frameworks"].append("NestJS")
-
-                if "typescript" in dep_keys:
-                    detected["primary_language"] = "TypeScript"
-
-                if "jest" in dep_keys:
-                    detected["testing_density"] = "High"
-
-            except:
-                pass
-
-    # ------------------------
-    # PYTHON DETECTION
-    # ------------------------
-
-    if requirements:
-        detected["primary_language"] = "Python"
-
-        for req in requirements:
-            try:
-                content = req.read_text().lower()
-
-                if "fastapi" in content:
-                    detected["frameworks"].append("FastAPI")
-                    detected["repository_type"] = "Backend API"
-
-                if "django" in content:
-                    detected["frameworks"].append("Django")
-
-                if "flask" in content:
-                    detected["frameworks"].append("Flask")
-
-                if "pytest" in content:
-                    detected["testing_density"] = "High"
-
-            except:
-                pass
-
-    # ------------------------
-    # INFRASTRUCTURE DETECTION
-    # ------------------------
-
-    if docker_files:
-        detected["frameworks"].append("Docker")
-
-    detected["frameworks"] = list(set(detected["frameworks"]))
-
-    return detected
