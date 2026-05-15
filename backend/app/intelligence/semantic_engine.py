@@ -1,3 +1,83 @@
+
+from pathlib import Path
+import os
+import time
+
+IGNORED_DIRECTORIES = {
+    ".git",
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "coverage",
+    "vendor",
+    "target",
+    "bin",
+    "obj",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "docs",
+    "examples",
+    "tmp",
+    "temp"
+}
+
+SUPPORTED_EXTENSIONS = {
+    ".py",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".java",
+    ".go",
+    ".rs",
+    ".cpp",
+    ".c",
+    ".cs",
+    ".php",
+    ".rb"
+}
+
+MAX_FILES = 2000
+MAX_FILE_SIZE = 1024 * 1024
+
+
+def iter_repository_files(repo_path):
+    analyzed = 0
+    start_time = time.time()
+
+    for root, dirs, files in os.walk(repo_path):
+
+        if time.time() - start_time > 30:
+            return
+
+        dirs[:] = [
+            d for d in dirs
+            if d not in IGNORED_DIRECTORIES
+        ]
+
+        for file in files:
+
+            if analyzed >= MAX_FILES:
+                return
+
+            path = Path(root) / file
+
+            if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+                continue
+
+            try:
+                if path.stat().st_size > MAX_FILE_SIZE:
+                    continue
+            except:
+                continue
+
+            analyzed += 1
+
+            yield path
+
+
 from pathlib import Path
 import ast
 
@@ -16,7 +96,7 @@ def analyze_semantics(repo_path: str):
 
     decorator_usage = {}
 
-    for file_path in repo.rglob("*"):
+    for file_path in iter_repository_files(repo):
         if file_path.suffix not in SUPPORTED_EXTENSIONS:
             continue
 
