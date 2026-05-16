@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 
 import EngineeringRadar from "../components/EngineeringRadar";
 import AIRecommendations from "../components/AIRecommendations";
-import DependencyGraph from "../components/DependencyGraph";
 
 export default function Home() {
 
@@ -152,7 +151,6 @@ export default function Home() {
             </div>
 
             <div className="mt-16">
-              <DependencyGraph result={result} />
             </div>
 
           </motion.div>
