@@ -1,79 +1,40 @@
+from backend.app.core.repo_manager import clone_repository
 from backend.app.intelligence.complexity_engine import analyze_complexity
-from backend.app.intelligence.dependency_engine import analyze_dependencies
-from backend.app.intelligence.architecture_engine import detect_architecture
+from backend.app.intelligence.dependency_graph import build_dependency_graph
 from backend.app.intelligence.semantic_engine import analyze_semantics
-
-from backend.app.services.health_scoring import calculate_health_score
-from backend.app.services.recommendation_engine import generate_recommendations
-from backend.app.services.repository_ingestion import ingest_repository
-
-from pathlib import Path
-
-
-LIGHTWEIGHT_REPO_THRESHOLD = 800
-
-
-def count_repository_files(repo_path):
-    return sum(
-        1
-        for p in Path(repo_path).rglob("*")
-        if p.is_file()
-    )
+from backend.app.intelligence.architecture_engine import detect_architecture
+from backend.app.intelligence.health_engine import calculate_health_score
 
 
 class EvolutionPipeline:
+    def __init__(self):
+        pass
 
     def run(self, repo_url: str):
+        cloned_repo_path = clone_repository(repo_url)
 
-        ingestion_result = ingest_repository(repo_url)
+        architecture_analysis = detect_architecture(cloned_repo_path)
 
-        repo_path = ingestion_result["repository_path"]
+        complexity_analysis = analyze_complexity(cloned_repo_path)
 
-        file_count = count_repository_files(repo_path)
+        dependency_analysis = build_dependency_graph(cloned_repo_path)
 
-        lightweight_mode = file_count > LIGHTWEIGHT_REPO_THRESHOLD
+        semantic_analysis = analyze_semantics(cloned_repo_path)
 
-        print(f"Lightweight mode: {lightweight_mode}")
+        analysis_results = {
+            "architecture": architecture_analysis,
+            "complexity": complexity_analysis,
+            "dependencies": dependency_analysis,
+            "semantics": semantic_analysis,
+        }
 
-        architecture_analysis = detect_architecture(repo_path)
-
-        complexity_analysis = analyze_complexity(repo_path)
-
-        if lightweight_mode:
-
-            dependency_analysis = {
-                "status": "Skipped in lightweight mode"
-            }
-
-            semantic_analysis = {
-                "status": "Skipped in lightweight mode"
-            }
-
-        else:
-
-            dependency_analysis = analyze_dependencies(repo_path)
-
-            semantic_analysis = analyze_semantics(repo_path)
-
-        health_score = calculate_health_score(analysis_results)
-            complexity_analysis,
-            dependency_analysis
-        )
-
-        recommendations = generate_recommendations(
-            complexity_analysis,
-            dependency_analysis,
-            health_score
+        health_score = calculate_health_score(
+            analysis_results
         )
 
         return {
+            "status": "success",
             "repository": repo_url,
-            "lightweight_mode": lightweight_mode,
-            "repository_size": file_count,
-            "architecture_analysis": architecture_analysis,
-            "complexity_analysis": complexity_analysis,
-            "dependency_analysis": dependency_analysis,
-            "semantic_analysis": semantic_analysis,
             "health_score": health_score,
-            "recommendations": recommendations,
+            "analysis": analysis_results,
         }
