@@ -66,7 +66,7 @@ def visit(node, result):
     elif node_type == "ArrowFunctionExpression":
         result["functions"] += 1
 
-    if hasattr(node, "async") and node.async:
+    if getattr(node, "async", False):
         result["async_functions"] += 1
 
     if hasattr(node, "id") and node.id:
