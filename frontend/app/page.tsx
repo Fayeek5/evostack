@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import EngineeringRadar from "../components/EngineeringRadar";
 import AIRecommendations from "../components/AIRecommendations";
+import AIRecommendations from "../components/AIRecommendations";
 
 export default function Home() {
 
@@ -295,6 +296,7 @@ export default function Home() {
 
     
 {result && <EngineeringRadar result={result} />
+<AIRecommendations result={result} />
 <AIRecommendations result={result} />}
 </main>
 

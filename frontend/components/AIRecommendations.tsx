@@ -18,7 +18,7 @@ export default function AIRecommendations({ result }: any) {
 
   if ((result?.analysis?.semantics?.async_functions || 0) > 50) {
     recommendations.push(
-      "Large async workload detected. Monitor concurrency and promise handling."
+      "Large async workload detected. Monitor concurrency and async operations."
     );
   }
 
@@ -41,7 +41,7 @@ export default function AIRecommendations({ result }: any) {
 
           <div
             key={index}
-            className="p-5 rounded-2xl border border-cyan-400/20 bg-cyan-500/5 text-cyan-100 hover:scale-[1.01] transition"
+            className="p-5 rounded-2xl border border-cyan-400/20 bg-cyan-500/5 text-cyan-100 hover:scale-[1.02] transition duration-300"
           >
             ⚡ {item}
           </div>
