@@ -209,9 +209,6 @@ setLoading(false)
 
 
             </div>
-
-          </div>
-
         )}
 
         {result && (
@@ -382,9 +379,6 @@ setLoading(false)
               />
 
             </div>
-
-          </div>
-
         )}
 
       </div>
