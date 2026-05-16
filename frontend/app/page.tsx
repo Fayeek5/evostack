@@ -7,6 +7,10 @@ import EngineeringRadar from "../components/EngineeringRadar";
 import AnalysisPipeline from "../components/AnalysisPipeline";
 import RepositoryInsights from "../components/RepositoryInsights";
 import ArchitectureExplorer from "../components/ArchitectureExplorer";
+import HotspotExplorer from "../components/HotspotExplorer";
+import FileIntelligenceTable from "../components/FileIntelligenceTable";
+
+
 
 
 
@@ -180,6 +184,12 @@ export default function Home() {
             <RepositoryInsights result={result} />
 
             <ArchitectureExplorer result={result} />
+
+            <HotspotExplorer result={result} />
+
+            <FileIntelligenceTable result={result} />
+
+
 
             <div className="mt-16">
               <AIRecommendations result={result} />

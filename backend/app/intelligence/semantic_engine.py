@@ -24,6 +24,8 @@ def analyze_semantics(repo_path):
     api_dirs = 0
     hook_dirs = 0
 
+    file_metrics = []
+
     frameworks = set()
 
     detected_languages = set()
@@ -108,12 +110,41 @@ def analyze_semantics(repo_path):
 
                     content = f.read()
 
-                functions += len(
+                file_functions = len(
                     re.findall(
                         r'function\s+\w+|\w+\s*=\s*\(?.*\)?\s*=>',
                         content
                     )
                 )
+
+                functions += file_functions
+
+                file_async = len(
+                    re.findall(
+                        r'async\s+function|async\s*\(',
+                        content
+                    )
+                )
+
+                async_functions += file_async
+
+                file_classes = len(
+                    re.findall(
+                        r'class\s+\w+',
+                        content
+                    )
+                )
+
+                classes += file_classes
+
+                file_imports = len(
+                    re.findall(
+                        r'import\s+.*?from|require\(',
+                        content
+                    )
+                )
+
+                imports += file_imports
 
                 async_functions += len(
                     re.findall(
@@ -156,6 +187,48 @@ def analyze_semantics(repo_path):
                         content
                     )
                 )
+
+                lines_of_code = len(
+                    content.splitlines()
+                )
+
+                risk_score = round(
+
+                    (
+                        file_functions * 2 +
+                        file_imports * 1.5 +
+                        file_async * 3 +
+                        file_classes * 2
+                    ),
+
+                    2
+                )
+
+                risk_level = "low"
+
+                if risk_score >= 80:
+                    risk_level = "high"
+
+                elif risk_score >= 40:
+                    risk_level = "medium"
+
+                file_metrics.append({
+
+                    "path": os.path.relpath(
+                        path,
+                        repo_path
+                    ),
+
+                    "functions": file_functions,
+                    "imports": file_imports,
+                    "async_functions": file_async,
+                    "classes": file_classes,
+
+                    "lines_of_code": lines_of_code,
+
+                    "risk_score": risk_score,
+                    "risk_level": risk_level
+                })
 
                 if (
                     "test" in file.lower()
@@ -215,6 +288,46 @@ def analyze_semantics(repo_path):
             except:
                 pass
 
+    top_risky_files = sorted(
+
+        file_metrics,
+
+        key=lambda x: x["risk_score"],
+
+        reverse=True
+
+    )[:5]
+
+    async_hotspots = sorted(
+
+        file_metrics,
+
+        key=lambda x: x["async_functions"],
+
+        reverse=True
+
+    )[:5]
+
+    largest_modules = sorted(
+
+        file_metrics,
+
+        key=lambda x: x["lines_of_code"],
+
+        reverse=True
+
+    )[:5]
+
+    dependency_hotspots = sorted(
+
+        file_metrics,
+
+        key=lambda x: x["imports"],
+
+        reverse=True
+
+    )[:5]
+
     dependency_density = round(
         imports / max(scanned_files, 1),
         2
@@ -238,6 +351,14 @@ def analyze_semantics(repo_path):
         "service_directories": service_dirs,
         "api_directories": api_dirs,
         "hook_directories": hook_dirs,
+
+        "top_risky_files": top_risky_files,
+        "async_hotspots": async_hotspots,
+        "dependency_hotspots": dependency_hotspots,
+
+        "largest_modules": largest_modules,
+
+        "file_metrics": file_metrics,
 
         "scanned_files": scanned_files
     }
