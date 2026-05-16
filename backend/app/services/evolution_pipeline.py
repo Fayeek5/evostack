@@ -1,74 +1,79 @@
-import asyncio
-
 from backend.app.intelligence.complexity_engine import analyze_complexity
 from backend.app.intelligence.dependency_engine import analyze_dependencies
-from backend.app.intelligence.semantic_engine import analyze_semantics
 from backend.app.intelligence.architecture_engine import detect_architecture
+from backend.app.intelligence.semantic_engine import analyze_semantics
 
-from .repository_ingestion import RepositoryIngestionService
-from .repository_analysis import RepositoryAnalyzer
-from .health_scoring import calculate_health_score
-from .recommendation_engine import generate_recommendations
+from backend.app.services.health_scoring import calculate_health_score
+from backend.app.services.recommendation_engine import generate_recommendations
+from backend.app.services.repository_ingestion import ingest_repository
+
+from pathlib import Path
+
+
+LIGHTWEIGHT_REPO_THRESHOLD = 800
+
+
+def count_repository_files(repo_path):
+    return sum(
+        1
+        for p in Path(repo_path).rglob("*")
+        if p.is_file()
+    )
 
 
 class EvolutionPipeline:
-    def __init__(self, clone_path=None):
-        self.clone_path = clone_path
 
-    async def run(self, repo_url, branch=None):
-        ingestion_service = RepositoryIngestionService()
+    def run(self, repo_url: str):
 
-        cloned_repo_path = await asyncio.to_thread(
-            ingestion_service.clone_repository,
-            repo_url,
-            branch
-        )
+        ingestion_result = ingest_repository(repo_url)
 
-        analyzer = RepositoryAnalyzer(cloned_repo_path)
+        repo_path = ingestion_result["repository_path"]
 
-        
-file_count = count_repository_files(repo_path)
+        file_count = count_repository_files(repo_path)
 
-lightweight_mode = file_count > LIGHTWEIGHT_REPO_THRESHOLD
+        lightweight_mode = file_count > LIGHTWEIGHT_REPO_THRESHOLD
 
-print(f"Lightweight mode: {lightweight_mode}")
+        print(f"Lightweight mode: {lightweight_mode}")
 
-await analyzer.analyze()
+        architecture_analysis = detect_architecture(repo_path)
 
-        complexity_results = analyze_complexity(cloned_repo_path)
+        complexity_analysis = analyze_complexity(repo_path)
 
-        dependency_results = analyze_dependencies(cloned_repo_path)
+        if lightweight_mode:
 
-        semantic_results = analyze_semantics(cloned_repo_path)
+            dependency_analysis = {
+                "status": "Skipped in lightweight mode"
+            }
 
-        architecture_analysis = detect_architecture(cloned_repo_path)
+            semantic_analysis = {
+                "status": "Skipped in lightweight mode"
+            }
+
+        else:
+
+            dependency_analysis = analyze_dependencies(repo_path)
+
+            semantic_analysis = analyze_semantics(repo_path)
 
         health_score = calculate_health_score(
-            complexity_results,
-            dependency_results,
-            analysis_results
+            complexity_analysis,
+            dependency_analysis
         )
 
         recommendations = generate_recommendations(
-            complexity_results,
-            dependency_results,
+            complexity_analysis,
+            dependency_analysis,
             health_score
         )
 
-        ingestion_service.cleanup()
-
         return {
-            "repo_url": repo_url,
-            "branch": branch,
-            "analysis_results": analysis_results,
-            "complexity_analysis": complexity_results,
-            "dependency_analysis": dependency_results,
-            "semantic_analysis": semantic_results,
+            "repository": repo_url,
+            "lightweight_mode": lightweight_mode,
+            "repository_size": file_count,
             "architecture_analysis": architecture_analysis,
+            "complexity_analysis": complexity_analysis,
+            "dependency_analysis": dependency_analysis,
+            "semantic_analysis": semantic_analysis,
             "health_score": health_score,
-            
-"recommendations": recommendations,
-"lightweight_mode": lightweight_mode,
-"repository_size": file_count
-
+            "recommendations": recommendations,
         }
