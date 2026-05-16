@@ -176,41 +176,39 @@ def analyze_semantics(repo_path):
 
                 if is_source_file:
 
-                    if (
-                        "next.config" in path.lower()
-                        or '"next"' in lower_content
-                    ):
-                        frameworks.add("Next.js")
-
-                    if (
-                        '"react"' in lower_content
-                        or "from 'react'" in lower_content
-                        or 'from "react"' in lower_content
+                    if re.search(
+                        r'import\s+react|from\s+[\'"]react[\'"]',
+                        lower_content
                     ):
                         frameworks.add("React")
 
-                    if (
-                        "from fastapi import" in lower_content
-                        or "import fastapi" in lower_content
+                    if re.search(
+                        r'from\s+[\'"]next',
+                        lower_content
+                    ):
+                        frameworks.add("Next.js")
+
+                    if re.search(
+                        r'from\s+fastapi\s+import|import\s+fastapi',
+                        lower_content
                     ):
                         frameworks.add("FastAPI")
 
-                    if (
-                        'from "express"' in lower_content
-                        or "from 'express'" in lower_content
-                        or 'require("express")' in lower_content
+                    if re.search(
+                        r'from\s+[\'"]express[\'"]|require\([\'"]express[\'"]\)',
+                        lower_content
                     ):
                         frameworks.add("Express")
 
-                    if (
-                        "from django" in lower_content
-                        or "import django" in lower_content
+                    if re.search(
+                        r'from\s+django|import\s+django',
+                        lower_content
                     ):
                         frameworks.add("Django")
 
-                    if (
-                        'github.com/gin-gonic/gin' in lower_content
-                        or 'github.com/gorilla/mux' in lower_content
+                    if re.search(
+                        r'github.com/gin-gonic/gin|github.com/gorilla/mux',
+                        lower_content
                     ):
                         frameworks.add("Go HTTP Framework")
 
