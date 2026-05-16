@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import EngineeringRadar from "../components/EngineeringRadar";
 
 export default function Home() {
 
@@ -291,7 +292,9 @@ export default function Home() {
 
       </div>
 
-    </main>
+    
+{result && <EngineeringRadar result={result} />}
+</main>
 
   );
 }
