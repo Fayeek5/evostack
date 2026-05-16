@@ -19,6 +19,18 @@ export default function Home() {
 
     try {
 
+      if (!repoUrl.trim()) {
+
+        setError("Please enter a GitHub repository URL");
+        return;
+      }
+
+      if (!repoUrl.includes("github.com")) {
+
+        setError("Only GitHub repositories are supported");
+        return;
+      }
+
       setLoading(true);
       setError("");
 
