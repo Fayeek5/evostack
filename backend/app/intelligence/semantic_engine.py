@@ -110,20 +110,44 @@ def analyze_semantics(repo_path):
                 ):
                     test_files += 1
 
-                if "next" in content.lower():
+                lower_content = content.lower()
+
+                if (
+                    "next.config" in path.lower()
+                    or '"next"' in lower_content
+                ):
                     frameworks.add("Next.js")
 
-                if "react" in content.lower():
+                if (
+                    '"react"' in lower_content
+                    or "from 'react'" in lower_content
+                    or 'from "react"' in lower_content
+                ):
                     frameworks.add("React")
 
-                if "fastapi" in content.lower():
+                if (
+                    "fastapi" in lower_content
+                    or "from fastapi" in lower_content
+                ):
                     frameworks.add("FastAPI")
 
-                if "express" in content.lower():
+                if (
+                    "express()" in lower_content
+                    or 'require("express")' in lower_content
+                ):
                     frameworks.add("Express")
 
-                if "django" in content.lower():
+                if (
+                    "django" in lower_content
+                    or "from django" in lower_content
+                ):
                     frameworks.add("Django")
+
+                if (
+                    "gin-gonic" in lower_content
+                    or "gorilla/mux" in lower_content
+                ):
+                    frameworks.add("Go HTTP Framework")
 
             except:
                 pass

@@ -43,11 +43,22 @@ class EvolutionPipeline:
             ) / 3
         )
 
-        if repo_url.endswith(".py"):
+        if semantic_data["scanned_files"] == 0:
+
+            language = "Unknown"
+
+        elif "Go HTTP Framework" in semantic_data.get("frameworks", []):
+
+            language = "Go"
+
+        elif "Django" in semantic_data.get("frameworks", []):
 
             language = "Python"
 
-        elif "react" in repo_url.lower():
+        elif (
+            "React" in semantic_data.get("frameworks", [])
+            or "Next.js" in semantic_data.get("frameworks", [])
+        ):
 
             language = "TypeScript"
 
