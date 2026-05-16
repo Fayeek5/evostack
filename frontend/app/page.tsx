@@ -1,5 +1,15 @@
 "use client"
 
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Sparkles,
+  Brain,
+  Activity,
+  GitBranch,
+  ShieldCheck,
+} from "lucide-react"
+
+
 import { useEffect, useState } from "react"
 
 const loadingStages = [
@@ -40,6 +50,17 @@ export default function Home() {
     if (!repoUrl) return
 
     setLoading(true)
+
+let stage = 0
+
+const interval = setInterval(() => {
+  stage++
+
+  if (stage < loadingStages.length) {
+    setLoadingStep(stage)
+  }
+}, 1800)
+
     setLoadingStep(0)
 
     setError("")
@@ -65,7 +86,8 @@ export default function Home() {
       setError(err.message)
     }
 
-    setLoading(false)
+    clearInterval(interval)
+setLoading(false)
   }
 
   return (
@@ -123,38 +145,68 @@ export default function Home() {
           </div>
         )}
 
-        {loading && (
+        
+{loading && (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
+  >
+    <div className="mb-6 flex items-center gap-3">
+      <Sparkles className="h-5 w-5 text-cyan-400" />
 
-          <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-10 mb-10">
+      <h3 className="text-lg font-medium text-white">
+        EvoStack Intelligence Pipeline
+      </h3>
+    </div>
 
-            <p className="text-3xl font-bold mb-8">
-              EvoStack Intelligence Pipeline
-            </p>
+    <div className="space-y-4">
+      {loadingStages.map((stage, index) => {
+        const Icon = stage.icon
 
-            <div className="space-y-5">
+        return (
+          <motion.div
+            key={stage.label}
+            initial={{ opacity: 0.3 }}
+            animate={{
+              opacity: index <= loadingStep ? 1 : 0.3,
+              x: index === loadingStep ? 6 : 0,
+            }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-3"
+          >
+            <div
+              className={`rounded-xl p-2 ${
+                index <= loadingStep
+                  ? "bg-cyan-500/20"
+                  : "bg-white/5"
+              }`}
+            >
+              <Icon className="h-4 w-4 text-cyan-300" />
+            </div>
 
-              {loadingStages.map((stage, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center gap-4 transition-all duration-500 ${
-                    index <= loadingStep
-                      ? "opacity-100"
-                      : "opacity-30"
-                  }`}
-                >
-                  <div
-                    className={`w-3 h-3 rounded-full ${
-                      index <= loadingStep
-                        ? "bg-green-400"
-                        : "bg-zinc-700"
-                    }`}
-                  />
+            <span className="text-sm text-zinc-300">
+              {stage.label}
+            </span>
+          </motion.div>
+        )
+      })}
+    </div>
 
-                  <p className="text-lg">
-                    {stage}
-                  </p>
-                </div>
-              ))}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 5 }}
+      className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4"
+    >
+      <p className="text-sm text-amber-200">
+        Large repository detected. EvoStack may switch
+        to lightweight intelligence mode for faster analysis.
+      </p>
+    </motion.div>
+  </motion.div>
+)}
+
 
             </div>
 
