@@ -1,4 +1,4 @@
-from backend.app.core.repo_manager import clone_repository
+from backend.app.services.repo_manager import clone_repository
 from backend.app.intelligence.complexity_engine import analyze_complexity
 from backend.app.intelligence.dependency_graph import build_dependency_graph
 from backend.app.intelligence.semantic_engine import analyze_semantics
