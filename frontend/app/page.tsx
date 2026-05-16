@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 import EngineeringRadar from "../components/EngineeringRadar";
+import AnalysisPipeline from "../components/AnalysisPipeline";
+
 import AIRecommendations from "../components/AIRecommendations";
 
 export default function Home() {
@@ -76,9 +78,7 @@ export default function Home() {
 
         {loading && (
 
-          <div className="mt-10 text-cyan-400 text-2xl">
-            Analyzing repository...
-          </div>
+          <AnalysisPipeline />
 
         )}
 
