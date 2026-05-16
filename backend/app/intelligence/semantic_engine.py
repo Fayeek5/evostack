@@ -1,99 +1,90 @@
-import esprima
+import os
+import re
 
-from backend.app.intelligence.smart_file_selector import (
-    get_priority_files,
+from backend.app.config import (
+    IGNORE_DIRS,
+    SUPPORTED_EXTENSIONS,
+    MAX_FILES
 )
 
 
 def analyze_semantics(repo_path):
 
-    result = {
-        "functions": 0,
-        "classes": 0,
-        "async_functions": 0,
-        "react_components": 0,
-        "hooks": 0,
-        "imports": 0,
+    functions = 0
+    async_functions = 0
+    classes = 0
+    react_components = 0
+
+    scanned_files = 0
+
+    for root, dirs, files in os.walk(repo_path):
+
+        dirs[:] = [
+            d for d in dirs
+            if d not in IGNORE_DIRS
+        ]
+
+        for file in files:
+
+            if scanned_files >= MAX_FILES:
+                break
+
+            ext = os.path.splitext(file)[1]
+
+            if ext not in SUPPORTED_EXTENSIONS:
+                continue
+
+            scanned_files += 1
+
+            try:
+
+                path = os.path.join(root, file)
+
+                with open(
+                    path,
+                    "r",
+                    encoding="utf-8",
+                    errors="ignore"
+                ) as f:
+
+                    content = f.read()
+
+                functions += len(
+                    re.findall(
+                        r'function\s+\w+|\w+\s*=\s*\(?.*\)?\s*=>',
+                        content
+                    )
+                )
+
+                async_functions += len(
+                    re.findall(
+                        r'async\s+function|async\s*\(',
+                        content
+                    )
+                )
+
+                classes += len(
+                    re.findall(
+                        r'class\s+\w+',
+                        content
+                    )
+                )
+
+                react_components += len(
+                    re.findall(
+                        r'export default function|const\s+\w+\s*=\s*\(',
+                        content
+                    )
+                )
+
+            except:
+                pass
+
+    return {
+
+        "functions": functions,
+        "classes": classes,
+        "async_functions": async_functions,
+        "react_components": react_components,
+        "scanned_files": scanned_files
     }
-
-    priority_files = get_priority_files(repo_path)
-
-    for file_path in priority_files:
-
-        try:
-
-            code = file_path.read_text(
-                encoding="utf-8",
-                errors="ignore"
-            )
-
-            tree = esprima.parseModule(
-                code,
-                tolerant=True
-            )
-
-            visit(tree, result)
-
-        except Exception:
-            continue
-
-    return result
-
-
-def visit(node, result):
-
-    if isinstance(node, list):
-
-        for item in node:
-            visit(item, result)
-
-        return
-
-    if not hasattr(node, "type"):
-        return
-
-    node_type = node.type
-
-    if node_type == "FunctionDeclaration":
-        result["functions"] += 1
-
-    elif node_type == "ClassDeclaration":
-        result["classes"] += 1
-
-    elif node_type == "ImportDeclaration":
-        result["imports"] += 1
-
-    elif node_type == "ArrowFunctionExpression":
-        result["functions"] += 1
-
-    if getattr(node, "async", False):
-        result["async_functions"] += 1
-
-    if hasattr(node, "id") and node.id:
-
-        try:
-
-            name = node.id.name
-
-            if name.startswith("use"):
-                result["hooks"] += 1
-
-            if len(name) > 0 and name[0].isupper():
-                result["react_components"] += 1
-
-        except Exception:
-            pass
-
-    for attr in dir(node):
-
-        if attr.startswith("_"):
-            continue
-
-        try:
-
-            child = getattr(node, attr)
-
-            visit(child, result)
-
-        except Exception:
-            continue
