@@ -1,217 +1,105 @@
-
-PRIORITY_DIRECTORIES = [
-    "src",
-    "app",
-    "backend",
-    "frontend",
-    "api",
-    "services",
-]
 from pathlib import Path
 import json
-from collections import Counter
 
 
-LANGUAGE_EXTENSIONS = {
-    ".py": "Python",
-    ".js": "JavaScript",
-    ".jsx": "React",
-    ".ts": "TypeScript",
-    ".tsx": "React TypeScript",
-    ".java": "Java",
-    ".go": "Go",
-    ".rs": "Rust",
-    ".php": "PHP",
-    ".rb": "Ruby",
-    ".cs": "C#",
-    ".cpp": "C++",
-    ".c": "C",
-    ".swift": "Swift",
-    ".kt": "Kotlin",
-    ".scala": "Scala",
-    ".yaml": "YAML",
-    ".yml": "YAML",
-    ".tf": "Terraform",
-    ".sh": "Shell",
+FRAMEWORK_SIGNATURES = {
+    "react": "React",
+    "next": "Next.js",
+    "express": "Express",
+    "nestjs": "NestJS",
+    "vue": "Vue",
+    "nuxt": "Nuxt",
+    "fastapi": "FastAPI",
+    "django": "Django",
+    "flask": "Flask",
+    "spring": "Spring Boot",
+    "laravel": "Laravel",
 }
 
 
-def detect_architecture(repo_path: str):
-    repo = Path(repo_path)
+def detect_architecture(repo_path):
 
-    languages = Counter()
+    language_stats = {}
 
     frameworks = set()
 
-    ci_cd = set()
+    total_files = 0
 
-    cloud = set()
+    for file_path in Path(repo_path).rglob("*"):
 
-    infrastructure = set()
+        if not file_path.is_file():
+            continue
 
-    repository_type = "General Software Project"
+        suffix = file_path.suffix.lower()
 
-    # ------------------------
-    # LANGUAGE DETECTION
-    # ------------------------
+        if suffix:
 
-    for file_path in repo.rglob("*"):
+            language_stats[suffix] = (
+                language_stats.get(suffix, 0) + 1
+            )
 
-        if file_path.is_file():
+            total_files += 1
 
-            ext = file_path.suffix.lower()
+        if file_path.name == "package.json":
 
-            if ext in LANGUAGE_EXTENSIONS:
-                languages[LANGUAGE_EXTENSIONS[ext]] += 1
+            try:
 
-            # Docker detection
-            if file_path.name == "Dockerfile":
-                infrastructure.add("Docker")
+                package_data = json.loads(
+                    file_path.read_text(
+                        encoding="utf-8",
+                        errors="ignore"
+                    )
+                )
 
-            # GitHub Actions
-            if ".github/workflows" in str(file_path):
-                ci_cd.add("GitHub Actions")
+                dependencies = {
+                    **package_data.get("dependencies", {}),
+                    **package_data.get("devDependencies", {}),
+                }
 
-            # Kubernetes
-            if "k8s" in str(file_path).lower():
-                infrastructure.add("Kubernetes")
+                for dependency in dependencies:
 
-            # Terraform
-            if ext == ".tf":
-                infrastructure.add("Terraform")
+                    dep_lower = dependency.lower()
 
-    # ------------------------
-    # PACKAGE.JSON ANALYSIS
-    # ------------------------
+                    for key, framework in FRAMEWORK_SIGNATURES.items():
 
-    package_json_files = list(repo.rglob("package.json"))
+                        if key in dep_lower:
+                            frameworks.add(framework)
 
-    for pkg in package_json_files:
+            except Exception:
+                pass
 
-        try:
-            data = json.loads(pkg.read_text())
+    language_percentages = {}
 
-            deps = {
-                **data.get("dependencies", {}),
-                **data.get("devDependencies", {})
-            }
+    for extension, count in language_stats.items():
 
-            dep_keys = deps.keys()
-
-            if "next" in dep_keys:
-                frameworks.add("Next.js")
-
-            if "react" in dep_keys:
-                frameworks.add("React")
-
-            if "express" in dep_keys:
-                frameworks.add("Express.js")
-
-            if "nestjs" in dep_keys:
-                frameworks.add("NestJS")
-
-            if "vue" in dep_keys:
-                frameworks.add("Vue")
-
-            if "angular" in dep_keys:
-                frameworks.add("Angular")
-
-            if "vite" in dep_keys:
-                frameworks.add("Vite")
-
-            if "jest" in dep_keys:
-                frameworks.add("Jest")
-
-            if "tailwindcss" in dep_keys:
-                frameworks.add("TailwindCSS")
-
-        except:
-            pass
-
-    # ------------------------
-    # PYTHON REQUIREMENTS
-    # ------------------------
-
-    requirements_files = list(repo.rglob("requirements.txt"))
-
-    for req in requirements_files:
-
-        try:
-            content = req.read_text().lower()
-
-            if "fastapi" in content:
-                frameworks.add("FastAPI")
-
-            if "django" in content:
-                frameworks.add("Django")
-
-            if "flask" in content:
-                frameworks.add("Flask")
-
-            if "pytest" in content:
-                frameworks.add("Pytest")
-
-            if "celery" in content:
-                frameworks.add("Celery")
-
-        except:
-            pass
-
-    # ------------------------
-    # CLOUD DETECTION
-    # ------------------------
-
-    if list(repo.rglob("vercel.json")):
-        cloud.add("Vercel")
-
-    if list(repo.rglob("render.yaml")):
-        cloud.add("Render")
-
-    if list(repo.rglob("docker-compose.yml")):
-        infrastructure.add("Docker Compose")
-
-    # ------------------------
-    # REPOSITORY TYPE
-    # ------------------------
-
-    if "Next.js" in frameworks and "FastAPI" in frameworks:
-        repository_type = "Fullstack AI Platform"
-
-    elif "Next.js" in frameworks:
-        repository_type = "Frontend Application"
-
-    elif "FastAPI" in frameworks or "Express.js" in frameworks:
-        repository_type = "Backend API"
-
-    elif len(package_json_files) > 1:
-        repository_type = "Monorepo"
-
-    primary_language = (
-        languages.most_common(1)[0][0]
-        if languages
-        else "Unknown"
-    )
-
-    total_files = sum(languages.values())
-
-    language_distribution = {}
-
-    for lang, count in languages.items():
-
-        percentage = (
-            round((count / total_files) * 100, 2)
-            if total_files > 0
-            else 0
+        percentage = round(
+            (count / total_files) * 100,
+            2
         )
 
-        language_distribution[lang] = percentage
+        language_percentages[
+            extension.replace(".", "").upper()
+        ] = percentage
+
+    primary_language = "Unknown"
+
+    if language_percentages:
+
+        primary_language = max(
+            language_percentages,
+            key=language_percentages.get
+        )
 
     return {
-        "repository_type": repository_type,
+        "repository_type": (
+            "Monorepo"
+            if total_files > 100
+            else "Standard Repository"
+        ),
         "primary_language": primary_language,
-        "languages": language_distribution,
-        "frameworks": sorted(list(frameworks)),
-        "ci_cd": sorted(list(ci_cd)),
-        "cloud": sorted(list(cloud)),
-        "infrastructure": sorted(list(infrastructure))
+        "languages": language_percentages,
+        "frameworks": list(frameworks),
+        "ci_cd": [],
+        "cloud": [],
+        "infrastructure": [],
     }
