@@ -28,7 +28,7 @@ export default function Home() {
     try {
 
       const response = await fetch(
-        `https://evostack-backend.onrender.com/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
+        `https://evostack.onrender.com/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
         {
           method: "POST",
         }
