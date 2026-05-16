@@ -35,6 +35,8 @@ class EvolutionPipeline:
         }
 
         health_score = calculate_health_score(
+            complexity_analysis,
+            dependency_analysis,
             analysis_results
         )
 
