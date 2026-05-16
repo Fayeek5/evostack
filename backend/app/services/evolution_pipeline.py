@@ -33,8 +33,7 @@ lightweight_mode = file_count > LIGHTWEIGHT_REPO_THRESHOLD
 
 print(f"Lightweight mode: {lightweight_mode}")
 
-analysis_results =
- await analyzer.analyze()
+await analyzer.analyze()
 
         complexity_results = analyze_complexity(cloned_repo_path)
 
