@@ -68,7 +68,10 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto">
 
-        <h1 className="text-8xl font-black mb-8">
+        <h1
+          onClick={() => window.location.reload()}
+          className="text-8xl font-black mb-8 cursor-pointer hover:opacity-80 transition"
+        >
           EvoStack
         </h1>
 
@@ -81,6 +84,14 @@ export default function Home() {
           <input
             value={repoUrl}
             onChange={(e) => setRepoUrl(e.target.value)}
+
+            onKeyDown={(e) => {
+
+              if (e.key === "Enter") {
+                analyzeRepository();
+              }
+
+            }}
             placeholder="Enter GitHub repository URL"
             className="flex-1 rounded-3xl border border-zinc-800 bg-zinc-950 p-6 text-2xl outline-none"
           />
