@@ -1,9 +1,8 @@
-from pathlib import Path
 import esprima
-from backend.app.intelligence.constants import IGNORED_DIRECTORIES
 
-
-SUPPORTED_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
+from backend.app.intelligence.smart_file_selector import (
+    get_priority_files,
+)
 
 
 def analyze_semantics(repo_path):
@@ -17,16 +16,9 @@ def analyze_semantics(repo_path):
         "imports": 0,
     }
 
-    for file_path in Path(repo_path).rglob("*"):
+    priority_files = get_priority_files(repo_path)
 
-        if any(
-            ignored in file_path.parts
-            for ignored in IGNORED_DIRECTORIES
-        ):
-            continue
-
-        if file_path.suffix not in SUPPORTED_EXTENSIONS:
-            continue
+    for file_path in priority_files:
 
         try:
 
@@ -74,7 +66,7 @@ def visit(node, result):
     elif node_type == "ArrowFunctionExpression":
         result["functions"] += 1
 
-    elif node_type == "AsyncFunctionDeclaration":
+    if hasattr(node, "async") and node.async:
         result["async_functions"] += 1
 
     if hasattr(node, "id") and node.id:
@@ -86,7 +78,7 @@ def visit(node, result):
             if name.startswith("use"):
                 result["hooks"] += 1
 
-            if name[0].isupper():
+            if len(name) > 0 and name[0].isupper():
                 result["react_components"] += 1
 
         except Exception:
@@ -98,7 +90,9 @@ def visit(node, result):
             continue
 
         try:
+
             child = getattr(node, attr)
+
             visit(child, result)
 
         except Exception:
