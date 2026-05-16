@@ -14,6 +14,12 @@ def analyze_semantics(repo_path):
     async_functions = 0
     classes = 0
     react_components = 0
+    imports = 0
+    api_routes = 0
+    hooks = 0
+    test_files = 0
+
+    frameworks = set()
 
     scanned_files = 0
 
@@ -77,8 +83,55 @@ def analyze_semantics(repo_path):
                     )
                 )
 
+                imports += len(
+                    re.findall(
+                        r'import\s+.*?from|require\(',
+                        content
+                    )
+                )
+
+                api_routes += len(
+                    re.findall(
+                        r'app\.(get|post|put|delete)|router\.',
+                        content
+                    )
+                )
+
+                hooks += len(
+                    re.findall(
+                        r'use(State|Effect|Memo|Callback|Ref)',
+                        content
+                    )
+                )
+
+                if (
+                    "test" in file.lower()
+                    or "spec" in file.lower()
+                ):
+                    test_files += 1
+
+                if "next" in content.lower():
+                    frameworks.add("Next.js")
+
+                if "react" in content.lower():
+                    frameworks.add("React")
+
+                if "fastapi" in content.lower():
+                    frameworks.add("FastAPI")
+
+                if "express" in content.lower():
+                    frameworks.add("Express")
+
+                if "django" in content.lower():
+                    frameworks.add("Django")
+
             except:
                 pass
+
+    dependency_density = round(
+        imports / max(scanned_files, 1),
+        2
+    )
 
     return {
 
@@ -86,5 +139,11 @@ def analyze_semantics(repo_path):
         "classes": classes,
         "async_functions": async_functions,
         "react_components": react_components,
+        "imports": imports,
+        "api_routes": api_routes,
+        "hooks": hooks,
+        "test_files": test_files,
+        "frameworks": list(frameworks),
+        "dependency_density": dependency_density,
         "scanned_files": scanned_files
     }
