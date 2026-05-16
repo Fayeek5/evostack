@@ -55,7 +55,7 @@ class EvolutionPipeline:
 
             semantic_analysis = analyze_semantics(repo_path)
 
-        health_score = calculate_health_score(
+        health_score = calculate_health_score(analysis_results)
             complexity_analysis,
             dependency_analysis
         )
