@@ -165,43 +165,54 @@ def analyze_semantics(repo_path):
 
                 lower_content = content.lower()
 
-                if (
-                    "next.config" in path.lower()
-                    or '"next"' in lower_content
-                ):
-                    frameworks.add("Next.js")
+                is_source_file = ext in [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx",
+                    ".py",
+                    ".go"
+                ]
 
-                if (
-                    '"react"' in lower_content
-                    or "from 'react'" in lower_content
-                    or 'from "react"' in lower_content
-                ):
-                    frameworks.add("React")
+                if is_source_file:
 
-                if (
-                    "from fastapi import" in lower_content
-                    or "import fastapi" in lower_content
-                ):
-                    frameworks.add("FastAPI")
+                    if (
+                        "next.config" in path.lower()
+                        or '"next"' in lower_content
+                    ):
+                        frameworks.add("Next.js")
 
-                if (
-                    'from "express"' in lower_content
-                    or "from 'express'" in lower_content
-                    or 'require("express")' in lower_content
-                ):
-                    frameworks.add("Express")
+                    if (
+                        '"react"' in lower_content
+                        or "from 'react'" in lower_content
+                        or 'from "react"' in lower_content
+                    ):
+                        frameworks.add("React")
 
-                if (
-                    "from django" in lower_content
-                    or "import django" in lower_content
-                ):
-                    frameworks.add("Django")
+                    if (
+                        "from fastapi import" in lower_content
+                        or "import fastapi" in lower_content
+                    ):
+                        frameworks.add("FastAPI")
 
-                if (
-                    'github.com/gin-gonic/gin' in lower_content
-                    or 'github.com/gorilla/mux' in lower_content
-                ):
-                    frameworks.add("Go HTTP Framework")
+                    if (
+                        'from "express"' in lower_content
+                        or "from 'express'" in lower_content
+                        or 'require("express")' in lower_content
+                    ):
+                        frameworks.add("Express")
+
+                    if (
+                        "from django" in lower_content
+                        or "import django" in lower_content
+                    ):
+                        frameworks.add("Django")
+
+                    if (
+                        'github.com/gin-gonic/gin' in lower_content
+                        or 'github.com/gorilla/mux' in lower_content
+                    ):
+                        frameworks.add("Go HTTP Framework")
 
             except:
                 pass
