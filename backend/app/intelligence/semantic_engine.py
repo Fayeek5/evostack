@@ -179,26 +179,27 @@ def analyze_semantics(repo_path):
                     frameworks.add("React")
 
                 if (
-                    "fastapi" in lower_content
-                    or "from fastapi" in lower_content
+                    "from fastapi import" in lower_content
+                    or "import fastapi" in lower_content
                 ):
                     frameworks.add("FastAPI")
 
                 if (
-                    "express()" in lower_content
+                    'from "express"' in lower_content
+                    or "from 'express'" in lower_content
                     or 'require("express")' in lower_content
                 ):
                     frameworks.add("Express")
 
                 if (
-                    "django" in lower_content
-                    or "from django" in lower_content
+                    "from django" in lower_content
+                    or "import django" in lower_content
                 ):
                     frameworks.add("Django")
 
                 if (
-                    "gin-gonic" in lower_content
-                    or "gorilla/mux" in lower_content
+                    'github.com/gin-gonic/gin' in lower_content
+                    or 'github.com/gorilla/mux' in lower_content
                 ):
                     frameworks.add("Go HTTP Framework")
 
