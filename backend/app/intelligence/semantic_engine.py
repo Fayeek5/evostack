@@ -1,165 +1,98 @@
-
-PRIORITY_DIRECTORIES = [
-    "src",
-    "app",
-    "backend",
-    "frontend",
-    "api",
-    "services",
-]
-
 from pathlib import Path
-import os
-import time
-
-IGNORED_DIRECTORIES = {
-    ".git",
-    "node_modules",
-    "dist",
-    "build",
-    ".next",
-    "coverage",
-    "vendor",
-    "target",
-    "bin",
-    "obj",
-    "__pycache__",
-    ".venv",
-    "venv",
-    "docs",
-    "examples",
-    "tmp",
-    "temp"
-}
-
-SUPPORTED_EXTENSIONS = {
-    ".py",
-    ".js",
-    ".jsx",
-    ".ts",
-    ".tsx",
-    ".java",
-    ".go",
-    ".rs",
-    ".cpp",
-    ".c",
-    ".cs",
-    ".php",
-    ".rb"
-}
-
-MAX_FILES = 2000
-MAX_FILE_SIZE = 1024 * 1024
+import esprima
 
 
-def iter_repository_files(repo_path):
-    analyzed = 0
-    start_time = time.time()
-
-    for root, dirs, files in os.walk(repo_path):
-
-        if time.time() - start_time > 30:
-            return
-
-        dirs[:] = [
-            d for d in dirs
-            if d not in IGNORED_DIRECTORIES
-        ]
-
-        for file in files:
-
-            if analyzed >= MAX_FILES:
-                return
-
-            path = Path(root) / file
-
-            if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
-                continue
-
-            try:
-                if path.stat().st_size > MAX_FILE_SIZE:
-                    continue
-            except:
-                continue
-
-            analyzed += 1
-
-            yield path
+SUPPORTED_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
 
 
-from pathlib import Path
-import ast
+def analyze_semantics(repo_path):
 
+    result = {
+        "functions": 0,
+        "classes": 0,
+        "async_functions": 0,
+        "react_components": 0,
+        "hooks": 0,
+        "imports": 0,
+    }
 
-SUPPORTED_EXTENSIONS = [".py"]
+    for file_path in Path(repo_path).rglob("*"):
 
-
-def analyze_semantics(repo_path: str):
-    repo = Path(repo_path)
-
-    total_functions = 0
-    total_classes = 0
-    async_functions = 0
-
-    large_functions = []
-
-    decorator_usage = {}
-
-    for file_path in iter_repository_files(repo):
         if file_path.suffix not in SUPPORTED_EXTENSIONS:
             continue
 
         try:
-            code = file_path.read_text(encoding="utf-8")
 
-            tree = ast.parse(code)
+            code = file_path.read_text(
+                encoding="utf-8",
+                errors="ignore"
+            )
 
-            for node in ast.walk(tree):
+            tree = esprima.parseModule(
+                code,
+                tolerant=True
+            )
 
-                if isinstance(node, ast.FunctionDef):
-                    total_functions += 1
+            visit(tree, result)
 
-                    function_length = (
-                        node.end_lineno - node.lineno
-                        if node.end_lineno
-                        else 0
-                    )
+        except Exception:
+            continue
 
-                    if function_length > 150:
-                        large_functions.append({
-                            "name": node.name,
-                            "lines": function_length,
-                            "file": str(file_path.relative_to(repo))
-                        })
+    return result
 
-                    for decorator in node.decorator_list:
-                        if isinstance(decorator, ast.Name):
-                            decorator_usage[decorator.id] = (
-                                decorator_usage.get(decorator.id, 0) + 1
-                            )
 
-                elif isinstance(node, ast.AsyncFunctionDef):
-                    async_functions += 1
-                    total_functions += 1
+def visit(node, result):
 
-                elif isinstance(node, ast.ClassDef):
-                    total_classes += 1
+    if isinstance(node, list):
+
+        for item in node:
+            visit(item, result)
+
+        return
+
+    if not hasattr(node, "type"):
+        return
+
+    node_type = node.type
+
+    if node_type == "FunctionDeclaration":
+        result["functions"] += 1
+
+    elif node_type == "ClassDeclaration":
+        result["classes"] += 1
+
+    elif node_type == "ImportDeclaration":
+        result["imports"] += 1
+
+    elif node_type == "ArrowFunctionExpression":
+        result["functions"] += 1
+
+    elif node_type == "AsyncFunctionDeclaration":
+        result["async_functions"] += 1
+
+    if hasattr(node, "id") and node.id:
+
+        try:
+
+            name = node.id.name
+
+            if name.startswith("use"):
+                result["hooks"] += 1
+
+            if name[0].isupper():
+                result["react_components"] += 1
 
         except Exception:
             pass
 
-    top_decorators = dict(
-        sorted(
-            decorator_usage.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )[:10]
-    )
+    for attr in dir(node):
 
-    return {
-        "functions": total_functions,
-        "classes": total_classes,
-        "async_functions": async_functions,
-        "large_functions": large_functions[:10],
-        "top_decorators": top_decorators
-    }
+        if attr.startswith("_"):
+            continue
+
+        try:
+            child = getattr(node, attr)
+            visit(child, result)
+
+        except Exception:
+            continue
