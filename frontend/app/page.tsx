@@ -1,6 +1,7 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react"
+import { motion } from "framer-motion"
 import {
   Sparkles,
   Brain,
@@ -9,64 +10,60 @@ import {
   ShieldCheck,
 } from "lucide-react"
 
-
-import { useEffect, useState } from "react"
-
-const loadingStages = [
-  "Cloning repository...",
-  "Parsing architecture...",
-  "Analyzing complexity...",
-  "Building dependency graph...",
-  "Running semantic analysis...",
-  "Generating engineering insights..."
-]
-
 export default function Home() {
+
   const [repoUrl, setRepoUrl] = useState("")
   const [loading, setLoading] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState("")
 
-  useEffect(() => {
-    let interval: any
+  const loadingStages = [
+    {
+      icon: GitBranch,
+      label: "Cloning repository",
+    },
+    {
+      icon: Brain,
+      label: "Parsing architecture",
+    },
+    {
+      icon: Activity,
+      label: "Analyzing complexity",
+    },
+    {
+      icon: Sparkles,
+      label: "Building semantic intelligence",
+    },
+    {
+      icon: ShieldCheck,
+      label: "Generating engineering insights",
+    },
+  ]
 
-    if (loading) {
-      interval = setInterval(() => {
-        setLoadingStep((prev) => {
-          if (prev >= loadingStages.length - 1) {
-            return prev
-          }
+  async function analyzeRepository() {
 
-          return prev + 1
-        })
-      }, 1200)
-    }
-
-    return () => clearInterval(interval)
-  }, [loading])
-
-  const analyzeRepo = async () => {
     if (!repoUrl) return
 
     setLoading(true)
-
-let stage = 0
-
-const interval = setInterval(() => {
-  stage++
-
-  if (stage < loadingStages.length) {
-    setLoadingStep(stage)
-  }
-}, 1800)
-
     setLoadingStep(0)
-
     setError("")
     setResult(null)
 
+    let stage = 0
+
+    const interval = setInterval(() => {
+
+      stage++
+
+      if (stage < loadingStages.length) {
+        setLoadingStep(stage)
+      }
+
+    }, 1800)
+
     try {
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
         {
@@ -83,394 +80,146 @@ const interval = setInterval(() => {
       setResult(data)
 
     } catch (err: any) {
-      setError(err.message)
-    }
 
-    clearInterval(interval)
-setLoading(false)
+      setError(err.message)
+
+    } finally {
+
+      clearInterval(interval)
+      setLoading(false)
+
+    }
   }
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-hidden">
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="min-h-screen bg-black text-white px-6 py-10"
+    >
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(120,119,198,0.18),transparent_40%)]" />
+      <div className="mx-auto max-w-5xl">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-8 py-16">
-
-        <div className="mb-16">
-
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-zinc-800 bg-zinc-900/60 backdrop-blur mb-6">
-            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-
-            <span className="text-sm text-zinc-300">
-              Autonomous Software Evolution Intelligence
-            </span>
-          </div>
-
-          <h1 className="text-8xl font-black tracking-tight mb-6">
+        <div className="mb-10">
+          <h1 className="text-5xl font-bold tracking-tight">
             EvoStack
           </h1>
 
-          <p className="text-2xl text-zinc-400 max-w-4xl leading-relaxed">
+          <p className="mt-4 text-zinc-400 max-w-2xl">
             AI-native repository governance and semantic engineering intelligence platform.
           </p>
+        </div>
+
+        <div className="flex gap-4">
+
+          <input
+            value={repoUrl}
+            onChange={(e) => setRepoUrl(e.target.value)}
+            placeholder="https://github.com/vercel/next.js"
+            className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 outline-none"
+          />
+
+          <button
+            onClick={analyzeRepository}
+            className="rounded-2xl bg-cyan-500 px-6 py-4 font-medium text-black"
+          >
+            Analyze
+          </button>
 
         </div>
 
-        <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-8 mb-12 shadow-2xl">
+        {loading && (
 
-          <div className="flex gap-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
+          >
 
-            <input
-              value={repoUrl}
-              onChange={(e) => setRepoUrl(e.target.value)}
-              placeholder="https://github.com/your/repository"
-              className="flex-1 bg-black/40 border border-zinc-700 rounded-2xl px-6 py-5 text-lg outline-none focus:border-white transition"
-            />
+            <div className="mb-6 flex items-center gap-3">
 
-            <button
-              onClick={analyzeRepo}
-              className="px-8 py-5 rounded-2xl bg-white text-black font-bold hover:scale-105 transition-all duration-200"
-            >
-              {loading ? "Analyzing..." : "Analyze"}
-            </button>
+              <Sparkles className="h-5 w-5 text-cyan-400" />
 
-          </div>
+              <h3 className="text-lg font-medium text-white">
+                EvoStack Intelligence Pipeline
+              </h3>
 
-        </div>
+            </div>
 
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-300 rounded-2xl p-6 mb-8">
-            {error}
-          </div>
+            <div className="space-y-4">
+
+              {loadingStages.map((stage, index) => {
+
+                const Icon = stage.icon
+
+                return (
+
+                  <motion.div
+                    key={stage.label}
+                    initial={{ opacity: 0.3 }}
+                    animate={{
+                      opacity: index <= loadingStep ? 1 : 0.3,
+                      x: index === loadingStep ? 6 : 0,
+                    }}
+                    transition={{ duration: 0.4 }}
+                    className="flex items-center gap-3"
+                  >
+
+                    <div
+                      className={`rounded-xl p-2 ${
+                        index <= loadingStep
+                          ? "bg-cyan-500/20"
+                          : "bg-white/5"
+                      }`}
+                    >
+
+                      <Icon className="h-4 w-4 text-cyan-300" />
+
+                    </div>
+
+                    <span className="text-sm text-zinc-300">
+                      {stage.label}
+                    </span>
+
+                  </motion.div>
+
+                )
+
+              })}
+
+            </div>
+
+          </motion.div>
+
         )}
 
-        
-{loading && (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
-  >
-    <div className="mb-6 flex items-center gap-3">
-      <Sparkles className="h-5 w-5 text-cyan-400" />
+        {error && (
 
-      <h3 className="text-lg font-medium text-white">
-        EvoStack Intelligence Pipeline
-      </h3>
-    </div>
+          <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+            {error}
+          </div>
 
-    <div className="space-y-4">
-      {loadingStages.map((stage, index) => {
-        const Icon = stage.icon
-
-        return (
-          <motion.div
-            key={stage.label}
-            initial={{ opacity: 0.3 }}
-            animate={{
-              opacity: index <= loadingStep ? 1 : 0.3,
-              x: index === loadingStep ? 6 : 0,
-            }}
-            transition={{ duration: 0.4 }}
-            className="flex items-center gap-3"
-          >
-            <div
-              className={`rounded-xl p-2 ${
-                index <= loadingStep
-                  ? "bg-cyan-500/20"
-                  : "bg-white/5"
-              }`}
-            >
-              <Icon className="h-4 w-4 text-cyan-300" />
-            </div>
-
-            <span className="text-sm text-zinc-300">
-              {stage.label}
-            </span>
-          </motion.div>
-        )
-      })}
-    </div>
-
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 5 }}
-      className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4"
-    >
-      <p className="text-sm text-amber-200">
-        Large repository detected. EvoStack may switch
-        to lightweight intelligence mode for faster analysis.
-      </p>
-    </motion.div>
-  </motion.div>
-)}
-
-
-            </div>
         )}
 
         {result && (
 
-          <div className="space-y-10 animate-in fade-in duration-700">
+          <div className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-8">
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <h2 className="text-2xl font-semibold">
+              Analysis Complete
+            </h2>
 
-              <MetricCard
-                title="Health Score"
-                value={result.health_score?.overall}
-              />
+            <pre className="mt-6 overflow-auto text-sm text-zinc-300">
+              {JSON.stringify(result, null, 2)}
+            </pre>
 
-              <MetricCard
-                title="Maintainability"
-                value={result.health_score?.maintainability_rating}
-              />
+          </div>
 
-              <MetricCard
-                title="High Risk Files"
-                value={result.complexity_analysis?.high_risk_count}
-              />
-
-              <MetricCard
-                title="Modules"
-                value={result.dependency_analysis?.total_modules}
-              />
-
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-
-              <InfoCard title="Architecture Analysis">
-
-                <InfoRow
-                  label="Repository Type"
-                  value={result.architecture_analysis?.repository_type}
-                />
-
-                <InfoRow
-                  label="Primary Language"
-                  value={result.architecture_analysis?.primary_language}
-                />
-
-                <InfoRow
-                  label="Architecture Style"
-                  value={result.architecture_analysis?.architecture_style}
-                />
-
-                <InfoRow
-                  label="Testing Density"
-                  value={result.architecture_analysis?.testing_density}
-                />
-
-                <div className="mt-6">
-
-                  <p className="text-zinc-500 mb-3">
-                    Frameworks
-                  </p>
-
-                  <div className="flex flex-wrap gap-3">
-
-                    {result.architecture_analysis?.frameworks_detected?.map(
-                      (framework: string, index: number) => (
-                        <div
-                          key={index}
-                          className="px-4 py-2 rounded-full bg-white text-black font-semibold"
-                        >
-                          {framework}
-                        </div>
-                      )
-                    )}
-
-                  </div>
-
-                </div>
-
-              </InfoCard>
-
-              <InfoCard title="Semantic Intelligence">
-
-                <InfoRow
-                  label="Functions"
-                  value={result.semantic_analysis?.functions}
-                />
-
-                <InfoRow
-                  label="Classes"
-                  value={result.semantic_analysis?.classes}
-                />
-
-                <InfoRow
-                  label="Async Functions"
-                  value={result.semantic_analysis?.async_functions}
-                />
-
-              </InfoCard>
-
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-
-              <InfoCard title="Large Function Hotspots">
-
-                <div className="space-y-4">
-
-                  {result.semantic_analysis?.large_functions?.map(
-                    (func: any, index: number) => (
-                      <div
-                        key={index}
-                        className="bg-black/40 border border-zinc-800 rounded-2xl p-5"
-                      >
-                        <p className="font-semibold break-all">
-                          {func.name}
-                        </p>
-
-                        <p className="text-zinc-500 text-sm mt-2 break-all">
-                          {func.file}
-                        </p>
-
-                        <p className="text-red-400 mt-3">
-                          {func.lines} lines
-                        </p>
-                      </div>
-                    )
-                  )}
-
-                </div>
-
-              </InfoCard>
-
-              <InfoCard title="Engineering Recommendations">
-
-                <div className="space-y-4">
-
-                  {result.recommendations?.map(
-                    (rec: string, index: number) => (
-                      <div
-                        key={index}
-                        className="bg-black/40 border border-zinc-800 rounded-2xl p-5"
-                      >
-                        {rec}
-                      </div>
-                    )
-                  )}
-
-                </div>
-
-              </InfoCard>
-
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-
-              <ScoreCard
-                title="Complexity"
-                score={result.health_score?.complexity_score}
-              />
-
-              <ScoreCard
-                title="Dependency"
-                score={result.health_score?.dependency_score}
-              />
-
-              <ScoreCard
-                title="Technical Debt"
-                score={result.health_score?.technical_debt_score}
-              />
-
-            </div>
         )}
 
       </div>
 
-    </main>
-  )
-}
-
-function MetricCard({
-  title,
-  value
-}: any) {
-  return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-8">
-      <p className="text-zinc-400 mb-4">
-        {title}
-      </p>
-
-      <h2 className="text-7xl font-black">
-        {value}
-      </h2>
-    </div>
-  )
-}
-
-function InfoCard({
-  title,
-  children
-}: any) {
-  return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-8">
-
-      <h3 className="text-2xl font-bold mb-8">
-        {title}
-      </h3>
-
-      {children}
-
-    </div>
-  )
-}
-
-function InfoRow({
-  label,
-  value
-}: any) {
-  return (
-    <div className="flex justify-between border-b border-zinc-800 py-4">
-
-      <p className="text-zinc-500">
-        {label}
-      </p>
-
-      <p className="font-semibold text-right max-w-[60%]">
-        {value}
-      </p>
-
-    </div>
-  )
-}
-
-function ScoreCard({
-  title,
-  score
-}: any) {
-
-  return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-8">
-
-      <div className="flex justify-between mb-5">
-
-        <p className="text-zinc-400">
-          {title}
-        </p>
-
-        <p className="font-bold">
-          {score}
-        </p>
-
-      </div>
-
-      <div className="w-full h-4 bg-zinc-800 rounded-full overflow-hidden">
-
-        <div
-          className="h-full bg-white transition-all duration-700"
-          style={{
-            width: `${score}%`
-          }}
-        />
-
-      </div>
-
-    </div>
+    </motion.main>
   )
 }
