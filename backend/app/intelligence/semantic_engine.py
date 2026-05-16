@@ -26,6 +26,8 @@ def analyze_semantics(repo_path):
 
     frameworks = set()
 
+    detected_languages = set()
+
     scanned_files = 0
 
     for root, dirs, files in os.walk(repo_path):
@@ -59,6 +61,18 @@ def analyze_semantics(repo_path):
 
             ext = os.path.splitext(file)[1]
 
+            if ext in [".ts", ".tsx"]:
+                detected_languages.add("TypeScript")
+
+            elif ext in [".js", ".jsx"]:
+                detected_languages.add("JavaScript")
+
+            elif ext == ".py":
+                detected_languages.add("Python")
+
+            elif ext == ".go":
+                detected_languages.add("Go")
+
             if ext not in SUPPORTED_EXTENSIONS:
                 continue
 
@@ -67,6 +81,23 @@ def analyze_semantics(repo_path):
             try:
 
                 path = os.path.join(root, file)
+
+                lower_file = file.lower()
+
+                if lower_file == "package.json":
+                    frameworks.add("Node.js")
+
+                if lower_file == "requirements.txt":
+                    detected_languages.add("Python")
+
+                if lower_file == "go.mod":
+                    detected_languages.add("Go")
+
+                if lower_file == "cargo.toml":
+                    detected_languages.add("Rust")
+
+                if lower_file == "pom.xml":
+                    detected_languages.add("Java")
 
                 with open(
                     path,
@@ -190,6 +221,7 @@ def analyze_semantics(repo_path):
         "hooks": hooks,
         "test_files": test_files,
         "frameworks": list(frameworks),
+        "detected_languages": list(detected_languages),
         "dependency_density": dependency_density,
 
         "component_directories": component_dirs,

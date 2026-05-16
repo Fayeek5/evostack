@@ -43,28 +43,18 @@ class EvolutionPipeline:
             ) / 3
         )
 
-        if semantic_data["scanned_files"] == 0:
+        detected_languages = semantic_data.get(
+            "detected_languages",
+            []
+        )
+
+        if len(detected_languages) == 0:
 
             language = "Unknown"
 
-        elif "Go HTTP Framework" in semantic_data.get("frameworks", []):
-
-            language = "Go"
-
-        elif "Django" in semantic_data.get("frameworks", []):
-
-            language = "Python"
-
-        elif (
-            "React" in semantic_data.get("frameworks", [])
-            or "Next.js" in semantic_data.get("frameworks", [])
-        ):
-
-            language = "TypeScript"
-
         else:
 
-            language = "JavaScript"
+            language = detected_languages[0]
 
         health_score = {
             "overall": overall_score,
