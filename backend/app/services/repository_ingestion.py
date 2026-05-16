@@ -1,32 +1,22 @@
+from git import Repo
+from pathlib import Path
 import shutil
 import tempfile
-from git import Repo
 
 
-class RepositoryIngestionService:
-    def __init__(self):
-        self.clone_path = tempfile.mkdtemp(prefix="evostack_repo_")
+def ingest_repository(repo_url: str):
 
-    def clone_repository(self, repo_url, branch=None):
-        try:
-            if branch:
-                Repo.clone_from(
-                    repo_url,
-                    self.clone_path,
-                    branch=branch
-                )
-            else:
-                Repo.clone_from(
-                    repo_url,
-                    self.clone_path
-                )
+    temp_dir = Path(tempfile.gettempdir()) / "temp_repo_dir"
 
-            return self.clone_path
+    # cleanup old repo
+    if temp_dir.exists():
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
-        except Exception as e:
-            raise Exception(
-                f"Failed to clone repository from {repo_url}: {str(e)}"
-            )
+    Repo.clone_from(
+        repo_url,
+        temp_dir
+    )
 
-    def cleanup(self):
-        shutil.rmtree(self.clone_path, ignore_errors=True)
+    return {
+        "repository_path": str(temp_dir)
+    }
