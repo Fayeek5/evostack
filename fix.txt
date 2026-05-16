@@ -1,0 +1,46 @@
+            <div className="grid grid-cols-4 gap-8">
+              {[
+                {
+                  label: "Overall Score",
+                  value: result?.health_score?.overall ?? 0,
+                  highlight: true,
+                },
+                {
+                  label: "Primary Language",
+                  value: result?.analysis?.architecture?.primary_language,
+                },
+                {
+                  label: "Functions",
+                  value: result?.analysis?.semantics?.functions,
+                },
+                {
+                  label: "React Components",
+                  value: result?.analysis?.semantics?.react_components,
+                },
+              ].map((card) => (
+                <motion.div
+                  key={card.label}
+                  whileHover={{
+                    y: -8,
+                    scale: 1.03,
+                    boxShadow: "0px 0px 40px rgba(34,211,238,0.15)",
+                  }}
+                  className={`rounded-[28px] border p-8 transition ${
+                    card.highlight
+                      ? "border-cyan-500/20 bg-cyan-500/10"
+                      : "border-zinc-800 bg-zinc-950"
+                  }`}
+                >
+                  <div className="text-zinc-400 text-xl">
+                    {card.label}
+                  </div>
+
+                  <div className="text-6xl font-bold mt-6">
+                    {card.value}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {result && <EngineeringRadar result={result} />}
+            {result && <AIRecommendations result={result} />}
