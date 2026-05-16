@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import AIRecommendations from "../components/AIRecommendations";
 import EngineeringRadar from "../components/EngineeringRadar";
+import DependencyGraph from "../components/DependencyGraph";
+
 
 
 export default function Home() {
@@ -299,7 +301,11 @@ export default function Home() {
             </div>
 
             <div className="mt-16">
-              <AIRecommendations result={result} />
+              
+<AIRecommendations result={result} />
+
+            <DependencyGraph result={result} />
+
             </div>
 
           </motion.div>
