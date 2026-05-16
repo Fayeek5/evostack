@@ -192,8 +192,9 @@ export default function Home() {
                     {card.value}
       </div>
     
-{result && <EngineeringRadar result={result} />
-<AIRecommendations result={result} />
+{result && <EngineeringRadar result={result} />}
+{result && <AIRecommendations result={result} />}
+
 </main>
   );
 }
