@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 
 import EngineeringRadar from "../components/EngineeringRadar";
 import AnalysisPipeline from "../components/AnalysisPipeline";
+import RepositoryInsights from "../components/RepositoryInsights";
+
 
 import AIRecommendations from "../components/AIRecommendations";
 
@@ -161,6 +163,8 @@ export default function Home() {
             <div className="mt-16">
               <EngineeringRadar result={result} />
             </div>
+
+            <RepositoryInsights result={result} />
 
             <div className="mt-16">
               <AIRecommendations result={result} />
