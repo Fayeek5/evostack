@@ -19,6 +19,11 @@ def analyze_semantics(repo_path):
     hooks = 0
     test_files = 0
 
+    component_dirs = 0
+    service_dirs = 0
+    api_dirs = 0
+    hook_dirs = 0
+
     frameworks = set()
 
     scanned_files = 0
@@ -29,6 +34,23 @@ def analyze_semantics(repo_path):
             d for d in dirs
             if d not in IGNORE_DIRS
         ]
+
+        lowered_dirs = [
+            d.lower()
+            for d in dirs
+        ]
+
+        if "components" in lowered_dirs:
+            component_dirs += 1
+
+        if "services" in lowered_dirs:
+            service_dirs += 1
+
+        if "api" in lowered_dirs:
+            api_dirs += 1
+
+        if "hooks" in lowered_dirs:
+            hook_dirs += 1
 
         for file in files:
 
@@ -169,5 +191,11 @@ def analyze_semantics(repo_path):
         "test_files": test_files,
         "frameworks": list(frameworks),
         "dependency_density": dependency_density,
+
+        "component_directories": component_dirs,
+        "service_directories": service_dirs,
+        "api_directories": api_dirs,
+        "hook_directories": hook_dirs,
+
         "scanned_files": scanned_files
     }
