@@ -1,23 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from backend.app.services.evolution_pipeline import EvolutionPipeline
 
 app = FastAPI()
 
-
-# VERY IMPORTANT
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+pipeline = EvolutionPipeline()
+
 
 @app.get("/")
-async def root():
+def health():
+
     return {
         "status": "healthy",
         "service": "EvoStack API"
@@ -25,10 +25,17 @@ async def root():
 
 
 @app.post("/analyze")
-async def analyze(repo_url: str):
+def analyze(repo_url: str):
 
-    pipeline = EvolutionPipeline()
+    try:
 
-    result = pipeline.run(repo_url)
+        result = pipeline.analyze_repository(repo_url)
 
-    return result
+        return result
+
+    except Exception as e:
+
+        return {
+            "status": "error",
+            "message": str(e)
+        }
