@@ -2,7 +2,23 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.services.evolution_pipeline import EvolutionPipeline
 
+from backend.app.database.init_db import (
+    initialize_database
+)
+
+from backend.app.database.history_service import (
+    get_repository_history,
+    get_latest_snapshot,
+    get_all_repositories
+)
+
+from backend.app.database.trend_service import (
+    calculate_repository_trends
+)
+
 app = FastAPI()
+
+initialize_database()
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,3 +55,33 @@ def analyze(repo_url: str):
             "status": "error",
             "message": str(e)
         }
+
+
+@app.get("/history")
+def history(repo_url: str):
+
+    return get_repository_history(
+        repo_url
+    )
+
+
+@app.get("/latest")
+def latest(repo_url: str):
+
+    return get_latest_snapshot(
+        repo_url
+    )
+
+
+@app.get("/repositories")
+def repositories():
+
+    return get_all_repositories()
+
+
+@app.get("/trends")
+def trends(repo_url: str):
+
+    return calculate_repository_trends(
+        repo_url
+    )

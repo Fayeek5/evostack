@@ -10,6 +10,11 @@ import ArchitectureExplorer from "../components/ArchitectureExplorer";
 import HotspotExplorer from "../components/HotspotExplorer";
 import FileIntelligenceTable from "../components/FileIntelligenceTable";
 
+import TrendInsights from "../components/TrendInsights";
+import HistoryTimeline from "../components/HistoryTimeline";
+import ScoreHistoryChart from "../components/ScoreHistoryChart";
+import RecentRepositories from "../components/RecentRepositories";
+
 
 
 
@@ -21,7 +26,14 @@ export default function Home() {
   const [repoUrl, setRepoUrl] = useState("");
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+
+  const [loadingStage, setLoadingStage] = useState("");
   const [error, setError] = useState("");
+
+  const [history, setHistory] = useState<any>([]);
+  const [trends, setTrends] = useState<any>(null);
+
+  const [repositories, setRepositories] = useState<any>([]);
 
   const analyzeRepository = async () => {
 
@@ -43,7 +55,7 @@ export default function Home() {
       setError("");
 
       const response = await fetch(
-        `https://evostack.onrender.com/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
         {
           method: "POST",
         }
@@ -57,9 +69,36 @@ export default function Home() {
 
       setResult(data);
 
+      const historyResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/history?repo_url=${encodeURIComponent(repoUrl)}`
+      );
+
+      const historyData = await historyResponse.json();
+
+      setHistory(historyData);
+
+      const trendsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/trends?repo_url=${encodeURIComponent(repoUrl)}`
+      );
+
+      const trendsData = await trendsResponse.json();
+
+      setTrends(trendsData);
+
+      const repositoriesResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/repositories`
+      );
+
+      const repositoriesData = await repositoriesResponse.json();
+
+      setRepositories(repositoriesData);
+
     } catch (err) {
 
-      setError("Analysis failed");
+      setError(
+        (err as Error)?.message ||
+        "Repository analysis failed"
+      );
 
     } finally {
 
@@ -192,7 +231,20 @@ export default function Home() {
 
 
             <div className="mt-16">
-              <AIRecommendations result={result} />
+              
+            <RecentRepositories
+              repositories={repositories}
+              onSelect={(repo: string) => setRepoUrl(repo)}
+            />
+
+            <TrendInsights trends={trends} />
+
+            <HistoryTimeline history={history} />
+
+            <ScoreHistoryChart history={history} />
+
+            <AIRecommendations result={result} />
+
             </div>
 
             <div className="mt-16">

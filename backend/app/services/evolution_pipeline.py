@@ -1,95 +1,83 @@
-from backend.app.services.repo_manager import clone_repository
-from backend.app.intelligence.semantic_engine import analyze_semantics
-from backend.app.services.recommendation_engine import generate_recommendations
+from backend.app.services.repo_manager import (
+    clone_repository
+)
+
+from backend.app.intelligence.semantic_engine import (
+    analyze_semantics
+)
+
+from backend.app.database.persistence import (
+    save_analysis_snapshot
+)
 
 
 class EvolutionPipeline:
 
     def analyze_repository(self, repo_url: str):
 
-        repo_path = clone_repository(repo_url)
-
-        semantic_data = analyze_semantics(repo_path)
-
-        functions = semantic_data.get(
-            "functions",
-            0
+        repo_path = clone_repository(
+            repo_url
         )
 
-        react_components = semantic_data.get(
-            "react_components",
-            0
+        semantic_data = analyze_semantics(
+            repo_path
         )
 
-        complexity_score = max(
-            30,
-            100 - int(functions * 0.15)
-        )
+        overall_score = 100
 
-        dependency_score = max(
-            40,
-            100 - int(react_components * 0.8)
-        )
+        if semantic_data["functions"] == 0:
+            overall_score = 45
 
-        technical_debt_score = int(
-            (complexity_score + dependency_score) / 2
-        )
-
-        overall_score = int(
-            (
-                complexity_score +
-                dependency_score +
-                technical_debt_score
-            ) / 3
-        )
-
-        detected_languages = semantic_data.get(
-            "detected_languages",
+        frameworks = semantic_data.get(
+            "frameworks",
             []
         )
 
-        if len(detected_languages) == 0:
+        primary_language = "Unknown"
 
-            language = "Unknown"
+        if "React" in frameworks:
+            primary_language = "TypeScript"
 
-        else:
+        elif "FastAPI" in frameworks:
+            primary_language = "Python"
 
-            language = detected_languages[0]
+        elif "Go HTTP Framework" in frameworks:
+            primary_language = "Go"
 
-        health_score = {
-            "overall": overall_score,
-            "complexity_score": complexity_score,
-            "dependency_score": dependency_score,
-            "technical_debt_score": technical_debt_score,
-            "maintainability_rating": (
-                "A" if overall_score >= 80
-                else "B" if overall_score >= 60
-                else "C"
-            )
-        }
+        result = {
 
-        recommendations = generate_recommendations(
-            complexity_analysis={},
-            dependency_analysis={},
-            health_score=health_score,
-            semantic_analysis=semantic_data
-        )
-
-        return {
             "status": "success",
+
             "repository": repo_url,
 
-            "health_score": health_score,
+            "health_score": {
+
+                "overall": overall_score,
+
+                "maintainability_rating": "A"
+            },
 
             "analysis": {
 
                 "architecture": {
-                    "primary_language": language,
-                    "repository_type": "Modern Repository"
+
+                    "primary_language": primary_language,
+
+                    "repository_type": (
+                        "Large Monolith"
+                        if semantic_data["scanned_files"] > 120
+                        else "Modular Repository"
+                    ),
+
+                    "frameworks": frameworks
                 },
 
                 "semantics": semantic_data
-            },
-
-            "recommendations": recommendations
+            }
         }
+
+        save_analysis_snapshot(
+            result
+        )
+
+        return result
