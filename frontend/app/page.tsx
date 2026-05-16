@@ -31,6 +31,10 @@ export default function Home() {
 
       const data = await response.json();
 
+      await new Promise((resolve) =>
+        setTimeout(resolve, 3500)
+      );
+
       setResult(data);
 
     } catch (err) {
