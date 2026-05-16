@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+from backend.app.intelligence.constants import IGNORED_DIRECTORIES
 
 
 FRAMEWORK_SIGNATURES = {
@@ -26,6 +27,12 @@ def detect_architecture(repo_path):
     total_files = 0
 
     for file_path in Path(repo_path).rglob("*"):
+
+        if any(
+            ignored in file_path.parts
+            for ignored in IGNORED_DIRECTORIES
+        ):
+            continue
 
         if not file_path.is_file():
             continue

@@ -1,5 +1,6 @@
 from pathlib import Path
 import esprima
+from backend.app.intelligence.constants import IGNORED_DIRECTORIES
 
 
 SUPPORTED_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
@@ -17,6 +18,12 @@ def analyze_semantics(repo_path):
     }
 
     for file_path in Path(repo_path).rglob("*"):
+
+        if any(
+            ignored in file_path.parts
+            for ignored in IGNORED_DIRECTORIES
+        ):
+            continue
 
         if file_path.suffix not in SUPPORTED_EXTENSIONS:
             continue
