@@ -240,20 +240,20 @@ export default function Home() {
               {[
                 {
                   label: "Overall Score",
-                  value: result.health_score.overall,
+                  value: result?.health_score?.overall ?? 0,
                   highlight: true,
                 },
                 {
                   label: "Primary Language",
-                  value: result.analysis.architecture.primary_language,
+                  value: result?.analysis?.architecture.primary_language,
                 },
                 {
                   label: "Functions",
-                  value: result.analysis.semantics.functions,
+                  value: result?.analysis?.semantics.functions,
                 },
                 {
                   label: "React Components",
-                  value: result.analysis.semantics.react_components,
+                  value: result?.analysis?.semantics.react_components,
                 },
               ].map((card) => (
 
