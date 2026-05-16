@@ -1,25 +1,31 @@
-from backend.app.services.repo_manager import clone_repository
+from backend.app.services.repository_ingestion import ingest_repository
+
 from backend.app.intelligence.complexity_engine import analyze_complexity
-from backend.app.intelligence.dependency_graph import build_dependency_graph
+from backend.app.intelligence.dependency_engine import analyze_dependencies
 from backend.app.intelligence.semantic_engine import analyze_semantics
 from backend.app.intelligence.architecture_engine import detect_architecture
-from backend.app.intelligence.health_engine import calculate_health_score
+
+from backend.app.services.health_scoring import calculate_health_score
 
 
 class EvolutionPipeline:
+
     def __init__(self):
         pass
 
     def run(self, repo_url: str):
-        cloned_repo_path = clone_repository(repo_url)
 
-        architecture_analysis = detect_architecture(cloned_repo_path)
+        ingestion_result = ingest_repository(repo_url)
 
-        complexity_analysis = analyze_complexity(cloned_repo_path)
+        repo_path = ingestion_result["repository_path"]
 
-        dependency_analysis = build_dependency_graph(cloned_repo_path)
+        architecture_analysis = detect_architecture(repo_path)
 
-        semantic_analysis = analyze_semantics(cloned_repo_path)
+        complexity_analysis = analyze_complexity(repo_path)
+
+        dependency_analysis = analyze_dependencies(repo_path)
+
+        semantic_analysis = analyze_semantics(repo_path)
 
         analysis_results = {
             "architecture": architecture_analysis,
