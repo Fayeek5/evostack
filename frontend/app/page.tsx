@@ -54,46 +54,69 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-12 overflow-hidden">
 
-      <div className="max-w-6xl mx-auto">
+    <main className="relative min-h-screen bg-black text-white overflow-hidden">
 
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-8xl font-bold tracking-tight"
-        >
-          EvoStack
-        </motion.h1>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,255,0.08),transparent_60%)]" />
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-gray-400 mt-6 text-2xl"
-        >
-          AI-native repository governance and semantic engineering intelligence platform.
-        </motion.p>
+      <motion.div
+        animate={{
+          backgroundPosition: ["0% 0%", "100% 100%"],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 20,
+          ease: "linear",
+        }}
+        className="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:60px_60px]"
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-8 py-16">
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex gap-4 mt-16"
+          transition={{ duration: 0.7 }}
         >
 
-          <input
+          <motion.h1
+            whileHover={{
+              scale: 1.02,
+              textShadow: "0px 0px 40px rgba(34,211,238,0.8)",
+            }}
+            className="text-[120px] font-black tracking-[-6px] leading-none"
+          >
+            EvoStack
+          </motion.h1>
+
+          <p className="text-zinc-400 text-2xl mt-6 max-w-4xl leading-relaxed">
+            AI-native repository governance and semantic engineering intelligence platform.
+          </p>
+
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex gap-6 mt-20"
+        >
+
+          <motion.input
             value={repoUrl}
             onChange={(e) => setRepoUrl(e.target.value)}
             placeholder="https://github.com/vercel/next.js"
-            className="flex-1 bg-black border border-zinc-800 rounded-3xl px-8 py-6 text-xl outline-none focus:border-cyan-400 transition"
+            className="flex-1 bg-zinc-950/70 backdrop-blur-xl border border-zinc-800 rounded-[28px] px-8 py-7 text-2xl outline-none transition"
           />
 
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 0px 50px rgba(34,211,238,0.4)",
+            }}
+            whileTap={{ scale: 0.96 }}
             onClick={analyzeRepo}
-            className="bg-cyan-400 text-black font-semibold px-10 py-6 rounded-3xl text-xl"
+            className="bg-cyan-400 text-black font-bold px-12 py-7 rounded-[28px] text-2xl"
           >
             {loading ? "Analyzing..." : "Analyze"}
           </motion.button>
@@ -103,9 +126,9 @@ export default function Home() {
         {loading && (
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-14 border border-zinc-900 rounded-[32px] p-10 bg-zinc-950 relative overflow-hidden"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative mt-16 overflow-hidden rounded-[36px] border border-cyan-500/10 bg-zinc-950/70 backdrop-blur-2xl p-12"
           >
 
             <motion.div
@@ -114,13 +137,13 @@ export default function Home() {
               }}
               transition={{
                 repeat: Infinity,
-                duration: 2,
+                duration: 3,
                 ease: "linear",
               }}
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent"
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent"
             />
 
-            <h2 className="text-5xl font-bold mb-12">
+            <h2 className="text-6xl font-bold mb-14">
               EvoStack Intelligence Pipeline
             </h2>
 
@@ -130,7 +153,7 @@ export default function Home() {
 
                 <motion.div
                   key={step}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -40 }}
                   animate={{
                     opacity: 1,
                     x: 0,
@@ -138,23 +161,27 @@ export default function Home() {
                   transition={{
                     delay: index * 0.2,
                   }}
-                  className="flex items-center gap-5"
+                  whileHover={{
+                    x: 12,
+                    scale: 1.01,
+                  }}
+                  className="flex items-center gap-6 bg-zinc-900/40 border border-zinc-800 rounded-2xl px-6 py-5"
                 >
 
                   <motion.div
                     animate={{
-                      scale: [1, 1.4, 1],
-                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.8, 1],
+                      opacity: [0.4, 1, 0.4],
                     }}
                     transition={{
                       repeat: Infinity,
-                      duration: 1.5,
+                      duration: 1.4,
                       delay: index * 0.2,
                     }}
                     className="w-4 h-4 rounded-full bg-cyan-400"
                   />
 
-                  <span className="text-2xl text-zinc-200">
+                  <span className="text-2xl text-zinc-100">
                     {step}...
                   </span>
 
@@ -164,14 +191,21 @@ export default function Home() {
 
             </div>
 
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{
-                duration: 8,
-              }}
-              className="h-2 bg-cyan-400 rounded-full mt-14"
-            />
+            <div className="mt-14 h-3 bg-zinc-900 rounded-full overflow-hidden">
+
+              <motion.div
+                animate={{
+                  x: ["-100%", "100%"],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "linear",
+                }}
+                className="h-full w-1/2 bg-cyan-400 rounded-full"
+              />
+
+            </div>
 
           </motion.div>
 
@@ -179,94 +213,75 @@ export default function Home() {
 
         {error && (
 
-          <div className="mt-10 border border-red-500/20 bg-red-500/10 text-red-300 rounded-3xl p-6 text-xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-10 rounded-3xl border border-red-500/20 bg-red-500/10 p-6 text-red-300 text-xl"
+          >
             {error}
-          </div>
+          </motion.div>
 
         )}
 
         {result && (
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-14 border border-zinc-900 rounded-[32px] p-10 bg-zinc-950"
+            className="mt-16 rounded-[36px] border border-zinc-800 bg-zinc-950/70 backdrop-blur-2xl p-12"
           >
 
-            <h2 className="text-6xl font-bold mb-10">
+            <h2 className="text-7xl font-bold mb-14">
               Repository Intelligence Report
             </h2>
 
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-4 gap-8">
 
-              <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-3xl p-6">
-                <div className="text-zinc-400 text-lg">
-                  Overall Score
-                </div>
-                <div className="text-7xl font-bold text-cyan-400 mt-3">
-                  {result.health_score.overall}
-                </div>
-              </div>
+              {[
+                {
+                  label: "Overall Score",
+                  value: result.health_score.overall,
+                  highlight: true,
+                },
+                {
+                  label: "Primary Language",
+                  value: result.analysis.architecture.primary_language,
+                },
+                {
+                  label: "Functions",
+                  value: result.analysis.semantics.functions,
+                },
+                {
+                  label: "React Components",
+                  value: result.analysis.semantics.react_components,
+                },
+              ].map((card) => (
 
-              <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6">
-                <div className="text-zinc-400 text-lg">
-                  Primary Language
-                </div>
-                <div className="text-4xl font-bold mt-6">
-                  {result.analysis.architecture.primary_language}
-                </div>
-              </div>
+                <motion.div
+                  key={card.label}
+                  whileHover={{
+                    y: -8,
+                    scale: 1.03,
+                    boxShadow: "0px 0px 40px rgba(34,211,238,0.15)",
+                  }}
+                  className={`rounded-[28px] border p-8 transition ${
+                    card.highlight
+                      ? "border-cyan-500/20 bg-cyan-500/10"
+                      : "border-zinc-800 bg-zinc-950"
+                  }`}
+                >
 
-              <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6">
-                <div className="text-zinc-400 text-lg">
-                  Functions
-                </div>
-                <div className="text-4xl font-bold mt-6">
-                  {result.analysis.semantics.functions}
-                </div>
-              </div>
+                  <div className="text-zinc-400 text-xl">
+                    {card.label}
+                  </div>
 
-              <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6">
-                <div className="text-zinc-400 text-lg">
-                  React Components
-                </div>
-                <div className="text-4xl font-bold mt-6">
-                  {result.analysis.semantics.react_components}
-                </div>
-              </div>
+                  <div className="text-6xl font-bold mt-6">
+                    {card.value}
+                  </div>
 
-            </div>
+                </motion.div>
 
-            <div className="mt-10 border border-zinc-900 rounded-3xl p-8">
-
-              <h3 className="text-4xl font-bold mb-8">
-                Architecture Analysis
-              </h3>
-
-              <div className="space-y-4 text-2xl">
-
-                <div>
-                  Repository Type: {" "}
-                  <span className="text-zinc-300">
-                    {result.analysis.architecture.repository_type}
-                  </span>
-                </div>
-
-                <div>
-                  Maintainability: {" "}
-                  <span className="text-cyan-400">
-                    {result.health_score.maintainability_rating}
-                  </span>
-                </div>
-
-                <div>
-                  Async Functions: {" "}
-                  <span className="text-zinc-300">
-                    {result.analysis.semantics.async_functions}
-                  </span>
-                </div>
-
-              </div>
+              ))}
 
             </div>
 
@@ -277,5 +292,6 @@ export default function Home() {
       </div>
 
     </main>
+
   );
 }
