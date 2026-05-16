@@ -70,7 +70,7 @@ export default function Home() {
 
         <h1
           onClick={() => window.location.reload()}
-          className="text-8xl font-black mb-8 cursor-pointer hover:opacity-80 transition"
+          className="text-5xl md:text-7xl xl:text-8xl font-black mb-8 cursor-pointer hover:opacity-80 transition"
         >
           EvoStack
         </h1>
@@ -79,7 +79,7 @@ export default function Home() {
           AI-native repository governance and semantic engineering intelligence platform.
         </p>
 
-        <div className="flex gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
 
           <input
             value={repoUrl}
@@ -127,17 +127,17 @@ export default function Home() {
             className="mt-16 rounded-[36px] border border-zinc-800 bg-zinc-950/70 p-12"
           >
 
-            <h2 className="text-6xl font-bold mb-12">
+            <h2 className="text-4xl md:text-5xl xl:text-6xl font-bold mb-12">
               Repository Intelligence Report
             </h2>
 
-            <div className="grid grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
 
               <div className="rounded-[28px] border border-cyan-500/20 bg-cyan-500/10 p-8">
                 <div className="text-zinc-400 text-xl">
                   Overall Score
                 </div>
-                <div className="text-6xl font-bold mt-6">
+                <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
                   {result?.health_score?.overall ?? 0}
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function Home() {
                 <div className="text-zinc-400 text-xl">
                   Functions
                 </div>
-                <div className="text-6xl font-bold mt-6">
+                <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
                   {result?.analysis?.semantics?.functions ?? 0}
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default function Home() {
                 <div className="text-zinc-400 text-xl">
                   React Components
                 </div>
-                <div className="text-6xl font-bold mt-6">
+                <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
                   {result?.analysis?.semantics?.react_components ?? 0}
                 </div>
               </div>
