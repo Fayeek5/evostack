@@ -1,4 +1,10 @@
 
+LIGHTWEIGHT_REPO_THRESHOLD = 800
+
+def count_repository_files(repo_path):
+    return sum(1 for _ in Path(repo_path).rglob("*") if _.is_file())
+    
+
 from pathlib import Path
 import os
 import time

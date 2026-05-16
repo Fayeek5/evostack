@@ -26,7 +26,15 @@ class EvolutionPipeline:
 
         analyzer = RepositoryAnalyzer(cloned_repo_path)
 
-        analysis_results = await analyzer.analyze()
+        
+file_count = count_repository_files(repo_path)
+
+lightweight_mode = file_count > LIGHTWEIGHT_REPO_THRESHOLD
+
+print(f"Lightweight mode: {lightweight_mode}")
+
+analysis_results =
+ await analyzer.analyze()
 
         complexity_results = analyze_complexity(cloned_repo_path)
 
@@ -59,5 +67,9 @@ class EvolutionPipeline:
             "semantic_analysis": semantic_results,
             "architecture_analysis": architecture_analysis,
             "health_score": health_score,
-            "recommendations": recommendations
+            
+"recommendations": recommendations,
+"lightweight_mode": lightweight_mode,
+"repository_size": file_count
+
         }
