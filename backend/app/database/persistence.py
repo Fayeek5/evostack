@@ -16,7 +16,7 @@ def save_analysis_snapshot(result):
         snapshot = RepositoryAnalysis(
 
             repository_url=result.get(
-                "repository",
+                "repository_url",
                 ""
             ),
 
