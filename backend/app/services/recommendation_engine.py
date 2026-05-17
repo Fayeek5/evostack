@@ -50,7 +50,7 @@ def generate_recommendations(
 
                     "description": (
 
-                        f"{top_file.get('file', 'Unknown file')} "
+                        f"{top_file.get('path', top_file.get('file', 'Unknown file'))} "
 
                         "has elevated engineering complexity "
                         "and should be modularized."
