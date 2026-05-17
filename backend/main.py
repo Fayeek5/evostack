@@ -35,8 +35,6 @@ pipeline = EvolutionPipeline()
 @app.get("/")
 def health():
 
-    recommendations = generate_recommendations(analysis)
-
     return {
         "status": "healthy",
         "service": "EvoStack API"
@@ -53,8 +51,6 @@ def analyze(repo_url: str):
         return result
 
     except Exception as e:
-
-        recommendations = generate_recommendations(analysis)
 
     return {
             "status": "error",

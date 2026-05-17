@@ -66,9 +66,7 @@ class EvolutionPipeline:
             primary_language = "Go"
 
         recommendations = generate_recommendations(
-            semantic_data,
-            score_data
-        )
+            semantic_data)
 
         maturity = calculate_maturity(
             overall_score
