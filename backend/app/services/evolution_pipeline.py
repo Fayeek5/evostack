@@ -10,6 +10,10 @@ from app.database.persistence import (
     save_analysis_snapshot
 )
 
+from app.services.scoring_engine import (
+    calculate_engineering_score
+)
+
 
 class EvolutionPipeline:
 
@@ -23,10 +27,11 @@ class EvolutionPipeline:
             repo_path
         )
 
-        overall_score = 100
+        score_data = calculate_engineering_score(
+            semantic_data
+        )
 
-        if semantic_data["functions"] == 0:
-            overall_score = 45
+        overall_score = score_data["overall"]
 
         frameworks = semantic_data.get(
             "frameworks",
@@ -54,7 +59,21 @@ class EvolutionPipeline:
 
                 "overall": overall_score,
 
-                "maintainability_rating": "A"
+                "maintainability": score_data["maintainability"],
+
+                "complexity": score_data["complexity"],
+
+                "architecture": score_data["architecture"],
+
+                "dependencies": score_data["dependencies"],
+
+                "testing": score_data["testing"],
+
+                "maintainability_rating": (
+                    "A"
+                    if overall_score >= 85
+                    else "B"
+                )
             },
 
             "analysis": {

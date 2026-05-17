@@ -353,6 +353,8 @@ def analyze_semantics(repo_path):
         "hook_directories": hook_dirs,
 
         "top_risky_files": top_risky_files,
+
+        "has_tests": has_tests,
         "async_hotspots": async_hotspots,
         "dependency_hotspots": dependency_hotspots,
 

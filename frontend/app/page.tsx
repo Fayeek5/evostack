@@ -83,6 +83,8 @@ export default function Home() {
 
       const trendsData = await trendsResponse.json();
 
+      console.log("TRENDS DATA:", trendsData);
+
       setTrends(trendsData);
 
       const repositoriesResponse = await fetch(
