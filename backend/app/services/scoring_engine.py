@@ -62,6 +62,29 @@ def calculate_engineering_score(semantic_data):
     if semantic_data.get("has_tests"):
         testing = 85
 
+    modularity_bonus = 0
+
+    if semantic_data.get(
+        "hooks_layer",
+        0
+    ) > 0:
+
+        modularity_bonus += 2
+
+    if semantic_data.get(
+        "service_layer",
+        0
+    ) > 0:
+
+        modularity_bonus += 2
+
+    if semantic_data.get(
+        "components_layer",
+        0
+    ) > 0:
+
+        modularity_bonus += 2
+
     overall_score = round(
 
         (
@@ -70,9 +93,14 @@ def calculate_engineering_score(semantic_data):
             architecture * 0.20 +
             dependencies * 0.15 +
             testing * 0.20
-        ),
+        ) + modularity_bonus,
 
         1
+    )
+
+    overall_score = min(
+        overall_score,
+        100
     )
 
     return {
