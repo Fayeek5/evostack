@@ -32,6 +32,8 @@ def analyze_semantics(repo_path):
 
     scanned_files = 0
 
+    has_tests = False
+
     for root, dirs, files in os.walk(repo_path):
 
         dirs[:] = [
@@ -354,7 +356,9 @@ def analyze_semantics(repo_path):
 
         "top_risky_files": top_risky_files,
 
-        "has_tests": has_tests,
+        "has_tests": (
+            test_files > 0
+        ),
         "async_hotspots": async_hotspots,
         "dependency_hotspots": dependency_hotspots,
 
