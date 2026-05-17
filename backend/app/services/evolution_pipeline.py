@@ -22,6 +22,10 @@ from app.services.summary_engine import (
     generate_repository_summary
 )
 
+from app.services.github_metadata import (
+    fetch_github_metadata
+)
+
 
 class EvolutionPipeline:
 
@@ -66,6 +70,12 @@ class EvolutionPipeline:
             generate_repository_summary(
                 semantic_data,
                 score_data
+            )
+        )
+
+        github_metadata = (
+            fetch_github_metadata(
+                repo_url
             )
         )
 
@@ -116,7 +126,9 @@ class EvolutionPipeline:
 
             "recommendations": recommendations,
 
-            "executive_summary": executive_summary
+            "executive_summary": executive_summary,
+
+            "github_metadata": github_metadata
         }
 
         save_analysis_snapshot(

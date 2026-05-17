@@ -23,6 +23,8 @@ import AIRecommendations from "../components/AIRecommendations";
 
 import ExecutiveSummary from "../components/ExecutiveSummary";
 
+import GitHubGovernance from "../components/GitHubGovernance";
+
 export default function Home() {
 
   const [repoUrl, setRepoUrl] = useState("");
@@ -248,6 +250,8 @@ export default function Home() {
             <ScoreHistoryChart history={history} />
 
             <ExecutiveSummary result={result} />
+
+            <GitHubGovernance result={result} />
 
             <AIRecommendations result={result} />
 
