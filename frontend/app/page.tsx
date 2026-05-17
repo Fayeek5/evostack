@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { motion } from "framer-motion";
 
 import EngineeringRadar from "../components/EngineeringRadar";
@@ -28,9 +29,10 @@ import GitHubGovernance from "../components/GitHubGovernance";
 export default function Home() {
 
   const [repoUrl, setRepoUrl] = useState("");
-  const [result, setResult] = useState<any>(null);
+
   const [loading, setLoading] = useState(false);
 
+  const [result, setResult] = useState<any>(null);
   const [loadingStage, setLoadingStage] = useState("");
   const [error, setError] = useState("");
 
