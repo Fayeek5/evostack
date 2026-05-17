@@ -1,7 +1,7 @@
 import os
 import re
 
-from backend.app.config import (
+from app.config import (
     IGNORE_DIRS,
     SUPPORTED_EXTENSIONS,
     MAX_FILES

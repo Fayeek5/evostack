@@ -1,12 +1,12 @@
-from backend.app.services.repo_manager import (
+from app.services.repo_manager import (
     clone_repository
 )
 
-from backend.app.intelligence.semantic_engine import (
+from app.intelligence.semantic_engine import (
     analyze_semantics
 )
 
-from backend.app.database.persistence import (
+from app.database.persistence import (
     save_analysis_snapshot
 )
 

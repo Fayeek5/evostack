@@ -1,18 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.services.evolution_pipeline import EvolutionPipeline
+from app.services.evolution_pipeline import EvolutionPipeline
 
-from backend.app.database.init_db import (
+from app.database.init_db import (
     initialize_database
 )
 
-from backend.app.database.history_service import (
+from app.database.history_service import (
     get_repository_history,
     get_latest_snapshot,
     get_all_repositories
 )
 
-from backend.app.database.trend_service import (
+from app.database.trend_service import (
     calculate_repository_trends
 )
 

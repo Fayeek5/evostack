@@ -1,8 +1,8 @@
-from backend.app.database.database import (
+from app.database.database import (
     engine
 )
 
-from backend.app.database.models import Base
+from app.database.models import Base
 
 
 def initialize_database():
