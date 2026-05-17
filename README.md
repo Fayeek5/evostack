@@ -47,6 +47,7 @@ AI-native repository governance and semantic engineering intelligence platform.
 
 # Architecture
 
+```txt
 Frontend (Next.js + React)
         │
         ▼
@@ -61,6 +62,7 @@ Semantic Analysis Engine
         ├── Evolution Timeline Engine
         ├── Dependency Intelligence
         └── Engineering Scoring Engine
+```
 
 ---
 
