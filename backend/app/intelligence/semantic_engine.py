@@ -64,6 +64,28 @@ def analyze_semantics(repo_path):
 
         for file in files:
 
+            ignored_paths = [
+
+                "node_modules",
+                ".next",
+                "dist",
+                "build",
+                "assets",
+                "scripts",
+                "__pycache__"
+            ]
+
+            current_path = os.path.join(
+                root,
+                file
+            )
+
+            if any(
+                ignored in current_path
+                for ignored in ignored_paths
+            ):
+                continue
+
             if scanned_files >= MAX_FILES:
                 break
 
