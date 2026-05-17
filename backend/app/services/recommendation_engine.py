@@ -5,149 +5,168 @@ def generate_recommendations(
 
     recommendations = []
 
-    risky_files = semantic_data.get(
-        "top_risky_files",
-        []
-    )
+    try:
 
-    imports = semantic_data.get(
-        "imports",
-        0
-    )
+        risky_files = semantic_data.get(
+            "top_risky_files",
+            []
+        )
 
-    functions = semantic_data.get(
-        "functions",
-        0
-    )
+        imports = semantic_data.get(
+            "imports",
+            0
+        )
 
-    has_tests = semantic_data.get(
-        "has_tests",
-        False
-    )
+        has_tests = semantic_data.get(
+            "has_tests",
+            False
+        )
 
-    scanned_files = semantic_data.get(
-        "scanned_files",
-        0
-    )
+        scanned_files = semantic_data.get(
+            "scanned_files",
+            0
+        )
 
-    # High risk orchestration files
+        # High risk orchestration files
 
-    if risky_files:
+        if risky_files and len(risky_files) > 0:
 
-        top_file = risky_files[0]
+            top_file = risky_files[0]
 
-        if top_file["risk_score"] > 20:
+            risk_score = top_file.get(
+                "risk_score",
+                0
+            )
+
+            if risk_score > 20:
+
+                recommendations.append({
+
+                    "type": "warning",
+
+                    "title": (
+                        "Large orchestration layer detected"
+                    ),
+
+                    "description": (
+
+                        f"{top_file.get('file', 'Unknown file')} "
+
+                        "has elevated engineering complexity "
+                        "and should be modularized."
+                    )
+                })
+
+        # Testing maturity
+
+        if not has_tests:
 
             recommendations.append({
 
                 "type": "warning",
 
                 "title": (
-                    "Large orchestration layer detected"
+                    "Testing maturity is weak"
                 ),
 
                 "description": (
 
-                    f"{top_file['file']} "
-
-                    "has elevated engineering complexity "
-                    "and should be modularized."
+                    "No significant test coverage "
+                    "was detected in the repository."
                 )
             })
 
-    # Testing maturity
+        # Dependency concentration
 
-    if not has_tests:
+        if imports > 40:
+
+            recommendations.append({
+
+                "type": "warning",
+
+                "title": (
+                    "High dependency concentration"
+                ),
+
+                "description": (
+
+                    "The repository exhibits "
+                    "heavy dependency usage."
+                )
+            })
+
+        # Large repository signal
+
+        if scanned_files > 120:
+
+            recommendations.append({
+
+                "type": "info",
+
+                "title": (
+                    "Large-scale repository detected"
+                ),
+
+                "description": (
+
+                    "Consider introducing "
+                    "domain-driven modularization."
+                )
+            })
+
+        # Maintainability
+
+        if score_data.get(
+            "maintainability",
+            0
+        ) >= 80:
+
+            recommendations.append({
+
+                "type": "success",
+
+                "title": (
+                    "Architecture appears maintainable"
+                ),
+
+                "description": (
+
+                    "The repository demonstrates "
+                    "healthy maintainability patterns."
+                )
+            })
+
+        # Complexity
+
+        if score_data.get(
+            "complexity",
+            100
+        ) < 70:
+
+            recommendations.append({
+
+                "type": "warning",
+
+                "title": (
+                    "Complexity risk detected"
+                ),
+
+                "description": (
+
+                    "Several files exhibit "
+                    "elevated complexity characteristics."
+                )
+            })
+
+    except Exception as e:
 
         recommendations.append({
 
             "type": "warning",
 
-            "title": (
-                "Testing maturity is weak"
-            ),
+            "title": "Recommendation engine warning",
 
-            "description": (
-
-                "No significant test coverage "
-                "was detected in the repository."
-            )
-        })
-
-    # Dependency concentration
-
-    if imports > 40:
-
-        recommendations.append({
-
-            "type": "warning",
-
-            "title": (
-                "High dependency concentration"
-            ),
-
-            "description": (
-
-                "The repository exhibits "
-                "heavy dependency usage."
-            )
-        })
-
-    # Large repository signal
-
-    if scanned_files > 120:
-
-        recommendations.append({
-
-            "type": "info",
-
-            "title": (
-                "Large-scale repository detected"
-            ),
-
-            "description": (
-
-                "Consider introducing "
-                "domain-driven modularization."
-            )
-        })
-
-    # Maintainability
-
-    if score_data["maintainability"] >= 80:
-
-        recommendations.append({
-
-            "type": "success",
-
-            "title": (
-                "Architecture appears maintainable"
-            ),
-
-            "description": (
-
-                "The repository demonstrates "
-                "healthy maintainability patterns."
-            )
-        })
-
-    # Complexity
-
-    if score_data["complexity"] < 70:
-
-        recommendations.append({
-
-            "type": "warning",
-
-            "title": (
-                "Complexity risk detected"
-            ),
-
-            "description": (
-
-                "Several files exhibit "
-                "elevated complexity characteristics."
-            )
+            "description": str(e)
         })
 
     return recommendations
