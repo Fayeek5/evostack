@@ -147,38 +147,224 @@ class EvolutionPipeline:
 
     def get_history(self, repo_url: str):
 
-        return []
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        history = (
+            db.query(RepositoryAnalysis)
+            .filter(
+                RepositoryAnalysis.repository_url == repo_url
+            )
+            .order_by(
+                RepositoryAnalysis.created_at.desc()
+            )
+            .all()
+        )
+
+        db.close()
+
+        return [
+            {
+                "score": item.overall_score,
+                "language": item.primary_language,
+                "created_at": str(item.created_at)
+            }
+            for item in history
+        ]
+
 
     def get_trends(self, repo_url: str):
 
+        history = self.get_history(repo_url)
+
+        if len(history) < 2:
+
+            return {
+                "trend": "stable",
+                "latest_score": (
+                    history[0]["score"]
+                    if history
+                    else 0
+                ),
+                "score_delta": 0,
+                "historical_analyses": len(history)
+            }
+
+        latest = history[0]["score"]
+        previous = history[1]["score"]
+
+        delta = round(latest - previous, 1)
+
         return {
-            "trend": "stable",
-            "score_delta": 0
+            "trend": (
+                "improving"
+                if delta > 0
+                else "declining"
+                if delta < 0
+                else "stable"
+            ),
+            "latest_score": latest,
+            "score_delta": delta,
+            "historical_analyses": len(history)
         }
+
 
     def get_latest(self):
 
-        return {}
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        latest = (
+            db.query(RepositoryAnalysis)
+            .order_by(
+                RepositoryAnalysis.created_at.desc()
+            )
+            .first()
+        )
+
+        db.close()
+
+        if not latest:
+            return {}
+
+        return {
+            "repository": latest.repository_url,
+            "score": latest.overall_score,
+            "language": latest.primary_language
+        }
+
 
     def get_repositories(self):
 
-        return []
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        repositories = (
+            db.query(
+                RepositoryAnalysis.repository_url
+            )
+            .distinct()
+            .all()
+        )
+
+        db.close()
+
+        return [r[0] for r in repositories]
 
     def get_history(self, repo_url: str):
 
-        return []
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        history = (
+            db.query(RepositoryAnalysis)
+            .filter(
+                RepositoryAnalysis.repository_url == repo_url
+            )
+            .order_by(
+                RepositoryAnalysis.created_at.desc()
+            )
+            .all()
+        )
+
+        db.close()
+
+        return [
+            {
+                "score": item.overall_score,
+                "language": item.primary_language,
+                "created_at": str(item.created_at)
+            }
+            for item in history
+        ]
+
 
     def get_trends(self, repo_url: str):
 
+        history = self.get_history(repo_url)
+
+        if len(history) < 2:
+
+            return {
+                "trend": "stable",
+                "latest_score": (
+                    history[0]["score"]
+                    if history
+                    else 0
+                ),
+                "score_delta": 0,
+                "historical_analyses": len(history)
+            }
+
+        latest = history[0]["score"]
+        previous = history[1]["score"]
+
+        delta = round(latest - previous, 1)
+
         return {
-            "trend": "stable",
-            "score_delta": 0
+            "trend": (
+                "improving"
+                if delta > 0
+                else "declining"
+                if delta < 0
+                else "stable"
+            ),
+            "latest_score": latest,
+            "score_delta": delta,
+            "historical_analyses": len(history)
         }
+
 
     def get_latest(self):
 
-        return {}
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        latest = (
+            db.query(RepositoryAnalysis)
+            .order_by(
+                RepositoryAnalysis.created_at.desc()
+            )
+            .first()
+        )
+
+        db.close()
+
+        if not latest:
+            return {}
+
+        return {
+            "repository": latest.repository_url,
+            "score": latest.overall_score,
+            "language": latest.primary_language
+        }
+
 
     def get_repositories(self):
 
-        return []
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
+
+        db = SessionLocal()
+
+        repositories = (
+            db.query(
+                RepositoryAnalysis.repository_url
+            )
+            .distinct()
+            .all()
+        )
+
+        db.close()
+
+        return [r[0] for r in repositories]
