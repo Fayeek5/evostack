@@ -75,6 +75,11 @@ def calculate_engineering_score(semantic_data):
         1
     )
 
+    overall = min(
+        overall,
+        100
+    )
+
     return {
 
         "overall": overall_score,
