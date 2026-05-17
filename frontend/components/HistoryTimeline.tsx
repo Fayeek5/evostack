@@ -1,8 +1,6 @@
 "use client";
 
-export default function HistoryTimeline({
-  history
-}: any) {
+export default function HistoryTimeline({ history }: { history: any }) {
 
   if (!history?.length) return null;
 
@@ -16,7 +14,7 @@ export default function HistoryTimeline({
 
       <div className="space-y-5">
 
-        {history.map((snapshot: any) => (
+        {history.map((snapshot: unknown) => (
 
           <div
             key={snapshot.id}

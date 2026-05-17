@@ -1,6 +1,6 @@
 "use client";
 
-export default function FileIntelligenceTable({ result }: any) {
+export default function FileIntelligenceTable({ result }: { result: any }) {
 
   const files =
     result?.analysis?.semantics?.file_metrics || [];
@@ -85,7 +85,7 @@ export default function FileIntelligenceTable({ result }: any) {
 
             ) : (
 
-              sortedFiles.map((file: any, index: number) => (
+              sortedFiles.map((file: unknown, index: number) => (
 
                 <tr
                   key={index}
@@ -93,31 +93,31 @@ export default function FileIntelligenceTable({ result }: any) {
                 >
 
                   <td className="p-6 text-sm text-zinc-300">
-                    {file.path}
+                    {(file as any).path}
                   </td>
 
                   <td className="p-6">
-                    {file.functions}
+                    {(file as any).functions}
                   </td>
 
                   <td className="p-6">
-                    {file.imports}
+                    {(file as any).imports}
                   </td>
 
                   <td className="p-6">
-                    {file.async_functions}
+                    {(file as any).async_functions}
                   </td>
 
                   <td className="p-6">
-                    {file.lines_of_code}
+                    {(file as any).lines_of_code}
                   </td>
 
                   <td className="p-6">
 
                     <span
-                      className={`px-4 py-2 rounded-full text-sm font-bold ${getBadge(file.risk_level)}`}
+                      className={`px-4 py-2 rounded-full text-sm font-bold ${getBadge((file as any).risk_level)}`}
                     >
-                      {file.risk_score}
+                      {(file as any).risk_score}
                     </span>
 
                   </td>

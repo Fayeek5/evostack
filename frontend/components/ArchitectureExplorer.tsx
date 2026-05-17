@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-export default function ArchitectureExplorer({ result }: any) {
+export default function ArchitectureExplorer({ result }: { result: any }) {
 
   const semantics =
     result?.analysis?.semantics || {};
@@ -48,7 +48,7 @@ export default function ArchitectureExplorer({ result }: any) {
         {architecture.map((item, index) => (
 
           <motion.div
-            key={item.title}
+            key={(item as any).title}
             initial={{
               opacity: 0,
               y: 20,
@@ -67,11 +67,11 @@ export default function ArchitectureExplorer({ result }: any) {
           >
 
             <div className="text-zinc-400 text-lg">
-              {item.title}
+              {(item as any).title}
             </div>
 
             <div className="text-5xl font-bold mt-4 text-cyan-200">
-              {item.value}
+              {(item as any).value}
             </div>
 
           </motion.div>

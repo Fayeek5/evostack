@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function EngineeringRadar({ result }: any) {
+export default function EngineeringRadar({ result }: { result: any }) {
 
   const data = [
     {

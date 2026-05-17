@@ -1,8 +1,6 @@
 "use client";
 
-export default function TrendInsights({
-  trends
-}: any) {
+export default function TrendInsights({ trends }: { trends: any }) {
 
   if (!trends) return null;
 

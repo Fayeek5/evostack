@@ -1,10 +1,10 @@
 "use client";
 
-export default function AIRecommendations({ result }: any) {
+export default function AIRecommendations({ result }: { result: any }) {
 
   const recommendations =
     Array.isArray(result?.recommendations)
-      ? result.recommendations
+      ? (result as any).recommendations
       : [];
 
   if (recommendations.length === 0) {
@@ -22,16 +22,16 @@ export default function AIRecommendations({ result }: any) {
       <div className="space-y-5">
 
         {recommendations.map(
-          (item: any, index: number) => {
+          (item: unknown, index: number) => {
 
             const title =
-              item?.title || "Engineering Insight";
+              (item as any)?.title || "Engineering Insight";
 
             const description =
-              item?.description || "";
+              (item as any)?.description || "";
 
             const type =
-              item?.type || "info";
+              (item as any)?.type || "info";
 
             const badgeColor =
               type === "warning"

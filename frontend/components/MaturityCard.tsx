@@ -1,8 +1,6 @@
 "use client";
 
-export default function MaturityCard({
-  result
-}: any) {
+export default function MaturityCard({ result }: { result: any }) {
 
   const maturity =
     result?.health_score?.maturity;
@@ -43,7 +41,7 @@ export default function MaturityCard({
         </div>
 
         <div className="mt-6 text-center text-zinc-400 max-w-2xl leading-relaxed">
-          EvoStack AI has evaluated this repository's
+          EvoStack AI has evaluated this repository&apos;s
           engineering maturity based on architecture,
           maintainability, dependency health, testing
           maturity, and orchestration complexity.

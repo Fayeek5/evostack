@@ -10,19 +10,17 @@ import {
   CartesianGrid
 } from "recharts";
 
-export default function ScoreHistoryChart({
-  history
-}: any) {
+export default function ScoreHistoryChart({ history }: { history: any }) {
 
   if (!history?.length) return null;
 
   const data = [...history]
     .reverse()
-    .map((item: any, index: number) => ({
+    .map((item: unknown, index: number) => ({
 
       run: index + 1,
 
-      score: item.overall_score
+      score: (item as any).overall_score
     }));
 
   return (

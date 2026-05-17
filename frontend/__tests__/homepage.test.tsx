@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 describe("EvoStack Homepage", () => {
   test("basic test validation", () => {

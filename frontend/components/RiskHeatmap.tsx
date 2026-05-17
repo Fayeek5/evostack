@@ -1,8 +1,6 @@
 "use client";
 
-export default function RiskHeatmap({
-  result
-}: any) {
+export default function RiskHeatmap({ result }: { result: any }) {
 
   const files =
     result?.analysis?.semantics?.top_risky_files || [];
@@ -20,10 +18,10 @@ export default function RiskHeatmap({
       <div className="space-y-5">
 
         {files.map(
-          (file: any, index: number) => {
+          (file: unknown, index: number) => {
 
             const risk =
-              Number(file.risk_score || 0);
+              Number((file as any).risk_score || 0);
 
             const width =
               Math.min(risk * 2.5, 100);
@@ -52,7 +50,7 @@ export default function RiskHeatmap({
                 <div className="flex items-center justify-between mb-3">
 
                   <div className="text-white font-semibold text-lg break-all">
-                    {file.path}
+                    {(file as any).path}
                   </div>
 
                   <div className={`px-3 py-1 rounded-full text-xs font-bold text-black ${severityColor}`}>
@@ -79,7 +77,7 @@ export default function RiskHeatmap({
                   </div>
 
                   <div>
-                    LOC: {file.lines_of_code}
+                    LOC: {(file as any).lines_of_code}
                   </div>
 
                 </div>

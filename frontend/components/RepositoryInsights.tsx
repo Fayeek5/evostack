@@ -1,6 +1,6 @@
 "use client";
 
-export default function RepositoryInsights({ result }: any) {
+export default function RepositoryInsights({ result }: { result: any }) {
 
   const semantics =
     result?.analysis?.semantics || {};
@@ -75,16 +75,16 @@ export default function RepositoryInsights({ result }: any) {
         {insights.map((item) => (
 
           <div
-            key={item.title}
+            key={(item as any).title}
             className="rounded-3xl border border-cyan-500/20 bg-black/40 p-8 hover:scale-[1.02] transition"
           >
 
             <div className="text-zinc-400 text-lg">
-              {item.title}
+              {(item as any).title}
             </div>
 
             <div className="text-3xl font-bold mt-4 text-cyan-200">
-              {item.value}
+              {(item as any).value}
             </div>
 
           </div>

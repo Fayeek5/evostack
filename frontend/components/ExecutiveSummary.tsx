@@ -1,8 +1,6 @@
 "use client";
 
-export default function ExecutiveSummary({
-  result
-}: any) {
+export default function ExecutiveSummary({ result }: { result: any }) {
 
   const summary =
     result?.executive_summary;

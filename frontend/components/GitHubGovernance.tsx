@@ -1,8 +1,6 @@
 "use client";
 
-export default function GitHubGovernance({
-  result
-}: any) {
+export default function GitHubGovernance({ result }: { result: any }) {
 
   const metadata =
     result?.github_metadata;
@@ -63,7 +61,7 @@ export default function GitHubGovernance({
 function Metric({
   label,
   value
-}: any) {
+}: unknown) {
 
   return (
 

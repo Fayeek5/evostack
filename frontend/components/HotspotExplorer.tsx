@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-export default function HotspotExplorer({ result }: any) {
+export default function HotspotExplorer({ result }: { result: any }) {
 
   const hotspots =
     result?.analysis?.semantics?.top_risky_files || [];
@@ -44,16 +44,16 @@ export default function HotspotExplorer({ result }: any) {
 
           <div className="space-y-4">
 
-            {hotspots.map((file: any, index: number) => (
+            {hotspots.map((file: unknown, index: number) => (
 
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.02 }}
-                className={`rounded-2xl border p-5 ${getRiskColor(file.risk_level)}`}
+                className={`rounded-2xl border p-5 ${getRiskColor((file as any).risk_level)}`}
               >
 
                 <div className="text-sm opacity-70 mb-2">
-                  {file.path}
+                  {(file as any).path}
                 </div>
 
                 <div className="flex justify-between items-center">
@@ -63,7 +63,7 @@ export default function HotspotExplorer({ result }: any) {
                   </div>
 
                   <div className="text-2xl font-black">
-                    {file.risk_score}
+                    {(file as any).risk_score}
                   </div>
 
                 </div>
@@ -84,7 +84,7 @@ export default function HotspotExplorer({ result }: any) {
 
           <div className="space-y-4">
 
-            {asyncHotspots.map((file: any, index: number) => (
+            {asyncHotspots.map((file: unknown, index: number) => (
 
               <div
                 key={index}
@@ -92,7 +92,7 @@ export default function HotspotExplorer({ result }: any) {
               >
 
                 <div className="text-sm opacity-70 mb-2">
-                  {file.path}
+                  {(file as any).path}
                 </div>
 
                 <div className="flex justify-between">
@@ -100,7 +100,7 @@ export default function HotspotExplorer({ result }: any) {
                   <span>Async Functions</span>
 
                   <span className="font-bold text-cyan-200">
-                    {file.async_functions}
+                    {(file as any).async_functions}
                   </span>
 
                 </div>
@@ -121,7 +121,7 @@ export default function HotspotExplorer({ result }: any) {
 
           <div className="space-y-4">
 
-            {dependencyHotspots.map((file: any, index: number) => (
+            {dependencyHotspots.map((file: unknown, index: number) => (
 
               <div
                 key={index}
@@ -129,7 +129,7 @@ export default function HotspotExplorer({ result }: any) {
               >
 
                 <div className="text-sm opacity-70 mb-2">
-                  {file.path}
+                  {(file as any).path}
                 </div>
 
                 <div className="flex justify-between">
@@ -137,7 +137,7 @@ export default function HotspotExplorer({ result }: any) {
                   <span>Imports</span>
 
                   <span className="font-bold text-cyan-200">
-                    {file.imports}
+                    {(file as any).imports}
                   </span>
 
                 </div>

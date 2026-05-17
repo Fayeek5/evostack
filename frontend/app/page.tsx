@@ -32,14 +32,14 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
-  const [result, setResult] = useState<any>(null);
-  const [loadingStage, setLoadingStage] = useState("");
+  const [result, setResult] = useState<unknown>(null);
+  // loading stage reserved for future pipeline visualization
   const [error, setError] = useState("");
 
-  const [history, setHistory] = useState<any>([]);
-  const [trends, setTrends] = useState<any>(null);
+  const [history, setHistory] = useState<unknown>([]);
+  const [trends, setTrends] = useState<unknown>(null);
 
-  const [repositories, setRepositories] = useState<any>([]);
+  const [repositories, setRepositories] = useState<unknown>([]);
 
   const analyzeRepository = async () => {
 
@@ -172,7 +172,7 @@ export default function Home() {
 
         )}
 
-        {result && (
+        {Boolean(result) && (
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -191,7 +191,7 @@ export default function Home() {
                   Overall Score
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {result?.health_score?.overall ?? 0}
+                  {(result as any)?.health_score?.overall ?? 0}
                 </div>
               </div>
 
@@ -200,7 +200,7 @@ export default function Home() {
                   Primary Language
                 </div>
                 <div className="text-5xl font-bold mt-6">
-                  {result?.analysis?.architecture?.primary_language ?? "Unknown"}
+                  {(result as any)?.analysis?.architecture?.primary_language ?? "Unknown"}
                 </div>
               </div>
 
@@ -209,7 +209,7 @@ export default function Home() {
                   Functions
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {result?.analysis?.semantics?.functions ?? 0}
+                  {(result as any)?.analysis?.semantics?.functions ?? 0}
                 </div>
               </div>
 
@@ -218,44 +218,44 @@ export default function Home() {
                   React Components
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {result?.analysis?.semantics?.react_components ?? 0}
+                  {(result as any)?.analysis?.semantics?.react_components ?? 0}
                 </div>
               </div>
 
             </div>
 
             <div className="mt-16">
-              <EngineeringRadar result={result} />
+              <EngineeringRadar result={result as any} />
             </div>
 
-            <RepositoryInsights result={result} />
+            <RepositoryInsights result={result as any} />
 
-            <ArchitectureExplorer result={result} />
+            <ArchitectureExplorer result={result as any} />
 
-            <HotspotExplorer result={result} />
+            <HotspotExplorer result={result as any} />
 
-            <FileIntelligenceTable result={result} />
+            <FileIntelligenceTable result={result as any} />
 
 
 
             <div className="mt-16">
               
             <RecentRepositories
-              repositories={repositories}
+              repositories={repositories as string[]}
               onSelect={(repo: string) => setRepoUrl(repo)}
             />
 
-            <TrendInsights trends={trends} />
+            <TrendInsights trends={trends as any} />
 
-            <HistoryTimeline history={history} />
+            <HistoryTimeline history={history as any} />
 
-            <ScoreHistoryChart history={history} />
+            <ScoreHistoryChart history={history as any} />
 
-            <ExecutiveSummary result={result} />
+            <ExecutiveSummary result={result as any} />
 
-            <GitHubGovernance result={result} />
+            <GitHubGovernance result={result as any} />
 
-            <AIRecommendations result={result} />
+            <AIRecommendations result={result as any} />
 
             </div>
 

@@ -11,16 +11,16 @@ export default function useRepositoryAnalysis() {
     useState("");
 
   const [result, setResult] =
-    useState<any>(null);
+    useState<Record<string, unknown> | null>(null);
 
   const [history, setHistory] =
-    useState<any[]>([]);
+    useState<string[]>([]);
 
   const [trends, setTrends] =
-    useState<any>(null);
+    useState<Record<string, unknown> | null>(null);
 
   const [repositories, setRepositories] =
-    useState<any[]>([]);
+    useState<string[]>([]);
 
   const analyzeRepository = async (
     repoUrl: string

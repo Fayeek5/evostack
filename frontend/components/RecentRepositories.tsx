@@ -3,7 +3,10 @@
 export default function RecentRepositories({
   repositories,
   onSelect
-}: any) {
+}: {
+  repositories: string[];
+  onSelect: (repo: string) => void;
+}) {
 
   if (!repositories?.length) return null;
 
