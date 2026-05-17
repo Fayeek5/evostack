@@ -11,6 +11,13 @@
 
 AI-native repository governance and semantic engineering intelligence platform.
 
+![EvoStack Demo](./assets/demo/evostack-demo.gif)
+
+## Live Demo
+
+https://evostack.vercel.app
+
+
 ---
 
 # Platform Preview
