@@ -9,7 +9,7 @@ from sqlalchemy import (
 
 from datetime import datetime
 
-from backend.app.database.database import Base
+from app.database.database import Base
 
 
 class RepositoryAnalysis(Base):
