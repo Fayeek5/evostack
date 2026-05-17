@@ -230,7 +230,6 @@ export default function Home() {
 
             <RepositoryInsights result={result as any} />
 
-            <AIRecommendations result={result as any} />
 
             <ArchitectureExplorer result={result as any} />
 
@@ -257,7 +256,6 @@ export default function Home() {
 
             <GitHubGovernance result={result as any} />
 
-            <AIRecommendations result={result as any} />
 
             </div>
 
