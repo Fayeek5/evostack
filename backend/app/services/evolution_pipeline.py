@@ -144,3 +144,41 @@ class EvolutionPipeline:
         )
 
         return result
+
+    def get_history(self, repo_url: str):
+
+        return []
+
+    def get_trends(self, repo_url: str):
+
+        return {
+            "trend": "stable",
+            "score_delta": 0
+        }
+
+    def get_latest(self):
+
+        return {}
+
+    def get_repositories(self):
+
+        return []
+
+    def get_history(self, repo_url: str):
+
+        return []
+
+    def get_trends(self, repo_url: str):
+
+        return {
+            "trend": "stable",
+            "score_delta": 0
+        }
+
+    def get_latest(self):
+
+        return {}
+
+    def get_repositories(self):
+
+        return []
