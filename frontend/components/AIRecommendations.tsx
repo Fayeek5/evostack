@@ -3,70 +3,38 @@
 export default function AIRecommendations({ result }: { result: any }) {
 
   const recommendations =
-    Array.isArray(result?.recommendations)
-      ? (result as any).recommendations
-      : [];
+    result?.recommendations || [];
 
-  if (recommendations.length === 0) {
-    return null;
-  }
+  if (!recommendations.length) return null;
 
   return (
 
-    <div className="w-full rounded-3xl border border-cyan-500/20 bg-black/40 p-8 mt-8">
+    <div className="mt-12 rounded-3xl border border-cyan-500/20 bg-black/40 p-8">
 
-      <h2 className="text-3xl font-bold text-white mb-6">
+      <h2 className="text-3xl font-bold text-white mb-8">
         AI Engineering Recommendations
       </h2>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
 
-        {recommendations.map(
-          (item: unknown, index: number) => {
+        {recommendations.map((item: any, index: number) => (
 
-            const title =
-              (item as any)?.title || "Engineering Insight";
+          <div
+            key={index}
+            className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6"
+          >
 
-            const description =
-              (item as any)?.description || "";
+            <div className="text-lg font-semibold text-cyan-400">
+              {item.title}
+            </div>
 
-            const type =
-              (item as any)?.type || "info";
+            <div className="text-zinc-400 mt-2">
+              {item.description}
+            </div>
 
-            const badgeColor =
-              type === "warning"
-                ? "bg-yellow-500/20 text-yellow-300"
-                : type === "success"
-                ? "bg-green-500/20 text-green-300"
-                : "bg-cyan-500/20 text-cyan-300";
+          </div>
 
-            return (
-
-              <div
-                key={index}
-                className="p-6 rounded-2xl border border-cyan-400/20 bg-cyan-500/5 hover:scale-[1.01] transition duration-300"
-              >
-
-                <div className="flex items-center gap-3 mb-3">
-
-                  <div className={`px-3 py-1 rounded-full text-sm font-semibold ${badgeColor}`}>
-                    {type.toUpperCase()}
-                  </div>
-
-                  <div className="text-xl font-semibold text-white">
-                    {title}
-                  </div>
-
-                </div>
-
-                <div className="text-cyan-100 leading-relaxed">
-                  {description}
-                </div>
-
-              </div>
-            );
-          }
-        )}
+        ))}
 
       </div>
 

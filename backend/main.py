@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.services.recommendation_engine import generate_recommendations
 from app.services.evolution_pipeline import EvolutionPipeline
 
 from app.database.init_db import (
@@ -34,6 +35,8 @@ pipeline = EvolutionPipeline()
 @app.get("/")
 def health():
 
+    recommendations = generate_recommendations(analysis)
+
     return {
         "status": "healthy",
         "service": "EvoStack API"
@@ -51,7 +54,9 @@ def analyze(repo_url: str):
 
     except Exception as e:
 
-        return {
+        recommendations = generate_recommendations(analysis)
+
+    return {
             "status": "error",
             "message": str(e)
         }
