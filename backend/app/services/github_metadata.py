@@ -21,33 +21,60 @@ def fetch_github_metadata(repo_url: str):
         response = requests.get(
             api_url,
             headers={
+                "Accept": "application/vnd.github+json",
                 "User-Agent": "EvoStack"
             },
             timeout=10
         )
 
+        if response.status_code != 200:
+
+            print(
+                "GITHUB API ERROR:",
+                response.status_code,
+                response.text
+            )
+
+            return {
+
+                "stars": 0,
+                "forks": 0,
+                "open_issues": 0,
+                "watchers": 0,
+                "language": "Unknown",
+                "last_activity": ""
+            }
+
         data = response.json()
 
         return {
 
-            "stars": data.get(
-                "stargazers_count",
-                0
+            "stars": int(
+                data.get(
+                    "stargazers_count",
+                    0
+                )
             ),
 
-            "forks": data.get(
-                "forks_count",
-                0
+            "forks": int(
+                data.get(
+                    "forks_count",
+                    0
+                )
             ),
 
-            "open_issues": data.get(
-                "open_issues_count",
-                0
+            "open_issues": int(
+                data.get(
+                    "open_issues_count",
+                    0
+                )
             ),
 
-            "watchers": data.get(
-                "subscribers_count",
-                0
+            "watchers": int(
+                data.get(
+                    "subscribers_count",
+                    0
+                )
             ),
 
             "language": data.get(
@@ -61,7 +88,12 @@ def fetch_github_metadata(repo_url: str):
             )[:10]
         }
 
-    except Exception:
+    except Exception as e:
+
+        print(
+            "GITHUB METADATA FAILURE:",
+            str(e)
+        )
 
         return {
 
