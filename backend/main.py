@@ -35,20 +35,24 @@ def analyze(repo_url: str):
 
 
 @app.get("/history")
-def history():
-    return pipeline.get_history()
+def history(repo_url: str):
+
+    return pipeline.get_history(repo_url)
 
 
 @app.get("/latest")
 def latest():
+
     return pipeline.get_latest()
 
 
 @app.get("/repositories")
 def repositories():
+
     return pipeline.get_repositories()
 
 
 @app.get("/trends")
-def trends():
-    return pipeline.get_trends()
+def trends(repo_url: str):
+
+    return pipeline.get_trends(repo_url)
