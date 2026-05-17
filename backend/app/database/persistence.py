@@ -81,9 +81,9 @@ def save_analysis_snapshot(result):
 
     except Exception as e:
 
-        raise Exception(f"PERSISTENCE ERROR: {str(e)}")
-
         db.rollback()
+
+        print(f"PERSISTENCE ERROR: {str(e)}")
 
     finally:
 
