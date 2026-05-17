@@ -1,4 +1,8 @@
 import os
+
+from app.intelligence.python_ast_engine import (
+    analyze_python_complexity
+)
 import re
 
 from app.config import (
