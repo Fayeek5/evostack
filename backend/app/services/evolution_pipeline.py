@@ -18,6 +18,10 @@ from app.services.recommendation_engine import (
     generate_recommendations
 )
 
+from app.services.maturity_engine import (
+    calculate_maturity
+)
+
 from app.services.summary_engine import (
     generate_repository_summary
 )
@@ -66,6 +70,10 @@ class EvolutionPipeline:
             score_data
         )
 
+        maturity = calculate_maturity(
+            overall_score
+        )
+
         executive_summary = (
             generate_repository_summary(
                 semantic_data,
@@ -103,7 +111,9 @@ class EvolutionPipeline:
                     "A"
                     if overall_score >= 85
                     else "B"
-                )
+                ),
+
+                "maturity": maturity
             },
 
             "analysis": {
