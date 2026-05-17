@@ -103,9 +103,28 @@ def calculate_engineering_score(semantic_data):
         100
     )
 
+
+    grade = "C"
+
+    if overall_score >= 90:
+        grade = "A+"
+
+    elif overall_score >= 80:
+        grade = "A"
+
+    elif overall_score >= 70:
+        grade = "B"
+
+    elif overall_score >= 60:
+        grade = "C"
+
+
+
     return {
 
         "overall": overall_score,
+
+        "grade": grade,
 
         "maintainability": round(
             maintainability,
