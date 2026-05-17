@@ -167,9 +167,9 @@ class EvolutionPipeline:
 
         return [
             {
-                "score": item.overall_score,
-                "language": item.primary_language,
-                "created_at": str(item.created_at)
+                "overall_score": item.overall_score,
+                "primary_language": item.primary_language,
+                "timestamp": str(item.created_at)
             }
             for item in history
         ]
@@ -184,7 +184,7 @@ class EvolutionPipeline:
             return {
                 "trend": "stable",
                 "latest_score": (
-                    history[0]["score"]
+                    history[0]["overall_score"]
                     if history
                     else 0
                 ),
@@ -192,8 +192,8 @@ class EvolutionPipeline:
                 "historical_analyses": len(history)
             }
 
-        latest = history[0]["score"]
-        previous = history[1]["score"]
+        latest = history[0]["overall_score"]
+        previous = history[1]["overall_score"]
 
         delta = round(latest - previous, 1)
 
@@ -279,9 +279,9 @@ class EvolutionPipeline:
 
         return [
             {
-                "score": item.overall_score,
-                "language": item.primary_language,
-                "created_at": str(item.created_at)
+                "overall_score": item.overall_score,
+                "primary_language": item.primary_language,
+                "timestamp": str(item.created_at)
             }
             for item in history
         ]
@@ -296,7 +296,7 @@ class EvolutionPipeline:
             return {
                 "trend": "stable",
                 "latest_score": (
-                    history[0]["score"]
+                    history[0]["overall_score"]
                     if history
                     else 0
                 ),
@@ -304,8 +304,8 @@ class EvolutionPipeline:
                 "historical_analyses": len(history)
             }
 
-        latest = history[0]["score"]
-        previous = history[1]["score"]
+        latest = history[0]["overall_score"]
+        previous = history[1]["overall_score"]
 
         delta = round(latest - previous, 1)
 
