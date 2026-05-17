@@ -1,5 +1,14 @@
 # EvoStack
 
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Python](https://img.shields.io/badge/Python-3.11-yellow)
+![CI](https://github.com/Fayeek5/evostack/actions/workflows/ci.yml/badge.svg)
+
+
 AI-native repository governance and semantic engineering intelligence platform.
 
 ---
