@@ -77,6 +77,14 @@ def save_analysis_snapshot(result):
 
         db.commit()
 
+        print("SNAPSHOT SAVED SUCCESSFULLY")
+
+    except Exception as e:
+
+        print("PERSISTENCE ERROR:", str(e))
+
+        db.rollback()
+
     finally:
 
         db.close()
