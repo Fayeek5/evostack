@@ -1,121 +1,153 @@
 def generate_recommendations(
-    complexity_analysis,
-    dependency_analysis,
-    health_score,
-    semantic_analysis=None
+    semantic_data,
+    score_data
 ):
+
     recommendations = []
 
-    overall = health_score.get("overall", 0)
-
-    complexity = health_score.get(
-        "complexity_score",
-        0
-    )
-
-    dependency = health_score.get(
-        "dependency_score",
-        0
-    )
-
-    debt = health_score.get(
-        "technical_debt_score",
-        0
-    )
-
-    functions = 0
-    react_components = 0
-
-    if semantic_analysis:
-
-        functions = semantic_analysis.get(
-            "functions",
-            0
-        )
-
-        react_components = semantic_analysis.get(
-            "react_components",
-            0
-        )
-
-    high_risk_files = complexity_analysis.get(
+    risky_files = semantic_data.get(
         "top_risky_files",
         []
     )
 
-    if high_risk_files:
-
-        risky = high_risk_files[0]
-
-        recommendations.append(
-            f"⚠ {risky['file']} has elevated complexity and should be modularized."
-        )
-
-    dependency_hotspots = dependency_analysis.get(
-        "most_connected_modules",
-        []
+    imports = semantic_data.get(
+        "imports",
+        0
     )
 
-    if dependency_hotspots:
+    functions = semantic_data.get(
+        "functions",
+        0
+    )
 
-        hotspot = dependency_hotspots[0]
+    has_tests = semantic_data.get(
+        "has_tests",
+        False
+    )
 
-        recommendations.append(
-            f"⚠ {hotspot['file']} shows high architectural coupling."
-        )
+    scanned_files = semantic_data.get(
+        "scanned_files",
+        0
+    )
 
-    if functions > 300:
+    # High risk orchestration files
 
-        recommendations.append(
-            "⚡ Large function surface area detected. Consider domain-driven modularization."
-        )
+    if risky_files:
 
-    elif functions > 150:
+        top_file = risky_files[0]
 
-        recommendations.append(
-            "⚡ Medium-scale repository detected with growing semantic complexity."
-        )
+        if top_file["risk_score"] > 20:
 
-    if react_components > 50:
+            recommendations.append({
 
-        recommendations.append(
-            "⚡ Large React component ecosystem detected. Lazy loading and component segmentation recommended."
-        )
+                "type": "warning",
 
-    if complexity < 70:
+                "title": (
+                    "Large orchestration layer detected"
+                ),
 
-        recommendations.append(
-            "⚠ Code complexity indicators suggest maintainability risks."
-        )
+                "description": (
 
-    if dependency < 70:
+                    f"{top_file['file']} "
 
-        recommendations.append(
-            "⚠ Dependency graph density is increasing architectural coupling."
-        )
+                    "has elevated engineering complexity "
+                    "and should be modularized."
+                )
+            })
 
-    if debt < 70:
+    # Testing maturity
 
-        recommendations.append(
-            "⚠ Technical debt indicators suggest refactoring opportunities."
-        )
+    if not has_tests:
 
-    if overall >= 85:
+        recommendations.append({
 
-        recommendations.append(
-            "✅ Repository architecture appears highly maintainable."
-        )
+            "type": "warning",
 
-    elif overall >= 60:
+            "title": (
+                "Testing maturity is weak"
+            ),
 
-        recommendations.append(
-            "⚡ Repository is stable but showing moderate engineering risk."
-        )
+            "description": (
 
-    else:
+                "No significant test coverage "
+                "was detected in the repository."
+            )
+        })
 
-        recommendations.append(
-            "🚨 Repository health is degrading and requires architectural intervention."
-        )
+    # Dependency concentration
+
+    if imports > 40:
+
+        recommendations.append({
+
+            "type": "warning",
+
+            "title": (
+                "High dependency concentration"
+            ),
+
+            "description": (
+
+                "The repository exhibits "
+                "heavy dependency usage."
+            )
+        })
+
+    # Large repository signal
+
+    if scanned_files > 120:
+
+        recommendations.append({
+
+            "type": "info",
+
+            "title": (
+                "Large-scale repository detected"
+            ),
+
+            "description": (
+
+                "Consider introducing "
+                "domain-driven modularization."
+            )
+        })
+
+    # Maintainability
+
+    if score_data["maintainability"] >= 80:
+
+        recommendations.append({
+
+            "type": "success",
+
+            "title": (
+                "Architecture appears maintainable"
+            ),
+
+            "description": (
+
+                "The repository demonstrates "
+                "healthy maintainability patterns."
+            )
+        })
+
+    # Complexity
+
+    if score_data["complexity"] < 70:
+
+        recommendations.append({
+
+            "type": "warning",
+
+            "title": (
+                "Complexity risk detected"
+            ),
+
+            "description": (
+
+                "Several files exhibit "
+                "elevated complexity characteristics."
+            )
+        })
 
     return recommendations

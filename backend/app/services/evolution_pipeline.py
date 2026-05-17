@@ -14,6 +14,10 @@ from app.services.scoring_engine import (
     calculate_engineering_score
 )
 
+from app.services.recommendation_engine import (
+    generate_recommendations
+)
+
 
 class EvolutionPipeline:
 
@@ -48,6 +52,11 @@ class EvolutionPipeline:
 
         elif "Go HTTP Framework" in frameworks:
             primary_language = "Go"
+
+        recommendations = generate_recommendations(
+            semantic_data,
+            score_data
+        )
 
         result = {
 
@@ -92,7 +101,9 @@ class EvolutionPipeline:
                 },
 
                 "semantics": semantic_data
-            }
+            },
+
+            "recommendations": recommendations
         }
 
         save_analysis_snapshot(
