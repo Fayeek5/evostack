@@ -18,6 +18,10 @@ from app.services.recommendation_engine import (
     generate_recommendations
 )
 
+from app.services.summary_engine import (
+    generate_repository_summary
+)
+
 
 class EvolutionPipeline:
 
@@ -56,6 +60,13 @@ class EvolutionPipeline:
         recommendations = generate_recommendations(
             semantic_data,
             score_data
+        )
+
+        executive_summary = (
+            generate_repository_summary(
+                semantic_data,
+                score_data
+            )
         )
 
         result = {
@@ -103,7 +114,9 @@ class EvolutionPipeline:
                 "semantics": semantic_data
             },
 
-            "recommendations": recommendations
+            "recommendations": recommendations,
+
+            "executive_summary": executive_summary
         }
 
         save_analysis_snapshot(

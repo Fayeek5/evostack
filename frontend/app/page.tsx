@@ -21,6 +21,8 @@ import RecentRepositories from "../components/RecentRepositories";
 
 import AIRecommendations from "../components/AIRecommendations";
 
+import ExecutiveSummary from "../components/ExecutiveSummary";
+
 export default function Home() {
 
   const [repoUrl, setRepoUrl] = useState("");
@@ -244,6 +246,8 @@ export default function Home() {
             <HistoryTimeline history={history} />
 
             <ScoreHistoryChart history={history} />
+
+            <ExecutiveSummary result={result} />
 
             <AIRecommendations result={result} />
 
