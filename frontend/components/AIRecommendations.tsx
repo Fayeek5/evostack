@@ -3,10 +3,11 @@
 export default function AIRecommendations({ result }: any) {
 
   const recommendations =
-    result?.recommendations || [];
+    Array.isArray(result?.recommendations)
+      ? result.recommendations
+      : [];
 
   if (recommendations.length === 0) {
-
     return null;
   }
 
@@ -21,24 +22,32 @@ export default function AIRecommendations({ result }: any) {
       <div className="space-y-4">
 
         {recommendations.map(
-          (item: any, index: number) => (
+          (item: any, index: number) => {
 
-            <div
-              key={index}
-              className="p-5 rounded-2xl border border-cyan-400/20 bg-cyan-500/5 hover:scale-[1.02] transition duration-300"
-            >
+            const title =
+              item?.title || "Engineering Insight";
 
-              <div className="text-xl font-semibold text-white mb-2">
-                {item.title}
+            const description =
+              item?.description || "No description available.";
+
+            return (
+
+              <div
+                key={index}
+                className="p-5 rounded-2xl border border-cyan-400/20 bg-cyan-500/5 hover:scale-[1.02] transition duration-300"
+              >
+
+                <div className="text-xl font-semibold text-white mb-2">
+                  {title}
+                </div>
+
+                <div className="text-cyan-100">
+                  {description}
+                </div>
+
               </div>
-
-              <div className="text-cyan-100">
-                {item.description}
-              </div>
-
-            </div>
-
-          )
+            );
+          }
         )}
 
       </div>
