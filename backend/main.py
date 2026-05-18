@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.services.evolution_pipeline import EvolutionPipeline
+from backend.app.services.evolution_pipeline import EvolutionPipeline
 
 app = FastAPI(
     title="EvoStack API"

@@ -1,6 +1,6 @@
 from pathlib import Path
 import json
-from app.intelligence.constants import IGNORED_DIRECTORIES
+from backend.app.intelligence.constants import IGNORED_DIRECTORIES
 
 
 FRAMEWORK_SIGNATURES = {

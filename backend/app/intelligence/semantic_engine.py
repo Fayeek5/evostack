@@ -1,11 +1,11 @@
 import os
 
-from app.intelligence.python_ast_engine import (
+from backend.app.intelligence.python_ast_engine import (
     analyze_python_complexity
 )
 import re
 
-from app.config import (
+from backend.app.config import (
     IGNORE_DIRS,
     SUPPORTED_EXTENSIONS,
     MAX_FILES

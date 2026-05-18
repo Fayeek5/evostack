@@ -1,4 +1,4 @@
-from app.database.history_service import (
+from backend.app.database.history_service import (
     get_repository_history
 )
 
