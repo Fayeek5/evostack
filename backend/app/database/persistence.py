@@ -1,8 +1,8 @@
-from backend.app.database.database import (
+from app.database.database import (
     SessionLocal
 )
 
-from backend.app.database.models import (
+from app.database.models import (
     RepositoryAnalysis
 )
 

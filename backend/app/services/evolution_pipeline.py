@@ -1,32 +1,32 @@
-from backend.app.services.repo_manager import (
+from app.services.repo_manager import (
     clone_repository
 )
 
-from backend.app.intelligence.semantic_engine import (
+from app.intelligence.semantic_engine import (
     analyze_semantics
 )
 
-from backend.app.database.persistence import (
+from app.database.persistence import (
     save_analysis_snapshot
 )
 
-from backend.app.services.scoring_engine import (
+from app.services.scoring_engine import (
     calculate_engineering_score
 )
 
-from backend.app.services.recommendation_engine import (
+from app.services.recommendation_engine import (
     generate_recommendations
 )
 
-from backend.app.services.maturity_engine import (
+from app.services.maturity_engine import (
     calculate_maturity
 )
 
-from backend.app.services.summary_engine import (
+from app.services.summary_engine import (
     generate_repository_summary
 )
 
-from backend.app.services.github_metadata import (
+from app.services.github_metadata import (
     fetch_github_metadata
 )
 
@@ -147,8 +147,8 @@ class EvolutionPipeline:
 
     def get_history(self, repo_url: str):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
@@ -213,8 +213,8 @@ class EvolutionPipeline:
 
     def get_latest(self):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
@@ -240,8 +240,8 @@ class EvolutionPipeline:
 
     def get_repositories(self):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
@@ -259,8 +259,8 @@ class EvolutionPipeline:
 
     def get_history(self, repo_url: str):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
@@ -325,8 +325,8 @@ class EvolutionPipeline:
 
     def get_latest(self):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
@@ -352,8 +352,8 @@ class EvolutionPipeline:
 
     def get_repositories(self):
 
-        from backend.app.database.database import SessionLocal
-        from backend.app.database.models import RepositoryAnalysis
+        from app.database.database import SessionLocal
+        from app.database.models import RepositoryAnalysis
 
         db = SessionLocal()
 
