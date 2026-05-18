@@ -13,6 +13,7 @@ import HotspotExplorer from "../components/HotspotExplorer";
 import FileIntelligenceTable from "../components/FileIntelligenceTable";
 
 import TrendInsights from "../components/TrendInsights";
+import CICDIntelligence from "../components/CICDIntelligence";
 import HistoryTimeline from "../components/HistoryTimeline";
 import ScoreHistoryChart from "../components/ScoreHistoryChart";
 import RecentRepositories from "../components/RecentRepositories";

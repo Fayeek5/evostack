@@ -38,6 +38,11 @@ def analyze_semantics(repo_path):
 
     has_tests = False
 
+    ci_detected = False
+    deployment_detected = False
+    linting_detected = False
+    testing_pipeline_detected = False
+
     for root, dirs, files in os.walk(repo_path):
 
         dirs[:] = [
@@ -137,6 +142,21 @@ def analyze_semantics(repo_path):
                 ) as f:
 
                     content = f.read()
+
+                lower_content = content.lower()
+
+                if ".github/workflows" in path:
+
+                    ci_detected = True
+
+                    if "npm run lint" in lower_content:
+                        linting_detected = True
+
+                    if "pytest" in lower_content or "npm test" in lower_content:
+                        testing_pipeline_detected = True
+
+                    if "vercel" in lower_content or "render" in lower_content:
+                        deployment_detected = True
 
                 file_functions = len(
                     re.findall(

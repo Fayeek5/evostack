@@ -20,80 +20,138 @@ def calculate_engineering_score(semantic_data):
         0
     )
 
-    risky_files = len(
-        semantic_data.get(
-            "top_risky_files",
-            []
-        )
+    async_functions = semantic_data.get(
+        "async_functions",
+        0
     )
 
+    risky_files = semantic_data.get(
+        "top_risky_files",
+        []
+    )
+
+    file_metrics = semantic_data.get(
+        "file_metrics",
+        []
+    )
+
+    has_tests = semantic_data.get(
+        "has_tests",
+        False
+    )
+
+    # -------------------------
     # Maintainability
+    # -------------------------
+
+    maintainability = 100
+
+    maintainability -= len(risky_files) * 3
+
+    oversized_files = 0
+
+    for file in file_metrics:
+
+        if file.get("loc", 0) > 250:
+            oversized_files += 1
+
+    maintainability -= oversized_files * 4
 
     maintainability = max(
-        40,
-        100 - (risky_files * 4)
+        35,
+        maintainability
     )
 
+    # -------------------------
     # Complexity
+    # -------------------------
+
+    complexity = 100
+
+    complexity -= (functions * 0.8)
+
+    complexity -= (imports * 0.5)
+
+    complexity -= (async_functions * 2)
+
+    complexity -= (oversized_files * 5)
 
     complexity = max(
-        30,
-        100 - ((functions + imports) / 3)
+        25,
+        complexity
     )
 
+    # -------------------------
     # Architecture
+    # -------------------------
+
+    architecture = 55
+
+    if semantic_data.get("components_layer", 0) > 0:
+        architecture += 10
+
+    if semantic_data.get("hooks_layer", 0) > 0:
+        architecture += 10
+
+    if semantic_data.get("service_layer", 0) > 0:
+        architecture += 15
+
+    if semantic_data.get("api_layer", 0) > 0:
+        architecture += 10
+
+    architecture += min(
+        10,
+        components
+    )
 
     architecture = min(
         100,
-        60 + (components * 2)
+        architecture
     )
 
+    # -------------------------
     # Dependencies
+    # -------------------------
+
+    dependency_density = 0
+
+    if scanned_files > 0:
+
+        dependency_density = (
+            imports / scanned_files
+        )
+
+    dependencies = 100
+
+    dependencies -= dependency_density * 6
 
     dependencies = max(
-        40,
-        100 - imports
+        35,
+        dependencies
     )
 
+    # -------------------------
     # Testing
+    # -------------------------
 
-    testing = 45
+    testing = 40
 
-    if semantic_data.get("has_tests"):
+    if has_tests:
         testing = 85
 
-    modularity_bonus = 0
-
-    if semantic_data.get(
-        "hooks_layer",
-        0
-    ) > 0:
-
-        modularity_bonus += 2
-
-    if semantic_data.get(
-        "service_layer",
-        0
-    ) > 0:
-
-        modularity_bonus += 2
-
-    if semantic_data.get(
-        "components_layer",
-        0
-    ) > 0:
-
-        modularity_bonus += 2
+    # -------------------------
+    # Overall weighted score
+    # -------------------------
 
     overall_score = round(
 
         (
             maintainability * 0.25 +
-            complexity * 0.20 +
+            complexity * 0.25 +
             architecture * 0.20 +
-            dependencies * 0.15 +
+            dependencies * 0.10 +
             testing * 0.20
-        ) + modularity_bonus,
+        ),
 
         1
     )
@@ -103,6 +161,9 @@ def calculate_engineering_score(semantic_data):
         100
     )
 
+    # -------------------------
+    # Grade
+    # -------------------------
 
     grade = "C"
 
@@ -118,7 +179,8 @@ def calculate_engineering_score(semantic_data):
     elif overall_score >= 60:
         grade = "C"
 
-
+    else:
+        grade = "D"
 
     return {
 
