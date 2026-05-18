@@ -61,6 +61,18 @@ export default function FileIntelligenceTable({ result }: { result: any }) {
               </th>
 
               <th className="text-left p-6">
+                Conditions
+              </th>
+
+              <th className="text-left p-6">
+                Loops
+              </th>
+
+              <th className="text-left p-6">
+                Nesting
+              </th>
+
+              <th className="text-left p-6">
                 Risk
               </th>
 
@@ -75,7 +87,7 @@ export default function FileIntelligenceTable({ result }: { result: any }) {
               <tr>
 
                 <td
-                  colSpan={6}
+                  colSpan={9}
                   className="p-10 text-center text-zinc-500"
                 >
                   No repository intelligence available
@@ -86,6 +98,8 @@ export default function FileIntelligenceTable({ result }: { result: any }) {
             ) : (
 
               sortedFiles.map((file: unknown, index: number) => (
+
+                <div key={index}>
 
                 <tr
                   key={index}
@@ -113,6 +127,18 @@ export default function FileIntelligenceTable({ result }: { result: any }) {
                   </td>
 
                   <td className="p-6">
+                    {(file as any).conditional_count}
+                  </td>
+
+                  <td className="p-6">
+                    {(file as any).loop_count}
+                  </td>
+
+                  <td className="p-6">
+                    {(file as any).nesting_depth}
+                  </td>
+
+                  <td className="p-6">
 
                     <span
                       className={`px-4 py-2 rounded-full text-sm font-bold ${getBadge((file as any).risk_level)}`}
@@ -123,6 +149,39 @@ export default function FileIntelligenceTable({ result }: { result: any }) {
                   </td>
 
                 </tr>
+
+                <tr>
+
+                  <td
+                    colSpan={9}
+                    className="px-6 pb-6"
+                  >
+
+                    <div className="flex flex-wrap gap-2">
+
+                      {((file as any).technical_debt_insights || []).map(
+                        (
+                          insight: string,
+                          insightIndex: number
+                        ) => (
+
+                          <div
+                            key={insightIndex}
+                            className="rounded-full bg-red-500/10 border border-red-500/20 px-3 py-1 text-xs text-red-300"
+                          >
+                            {insight}
+                          </div>
+
+                        )
+                      )}
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+                </div>
 
               ))
 

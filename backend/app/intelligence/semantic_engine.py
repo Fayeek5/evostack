@@ -236,6 +236,25 @@ def analyze_semantics(repo_path):
                     )
                 )
 
+                conditional_count = len(
+                    re.findall(
+                        r'\bif\b|\belif\b|\bswitch\b|\bcase\b',
+                        content
+                    )
+                )
+
+                loop_count = len(
+                    re.findall(
+                        r'\bfor\b|\bwhile\b',
+                        content
+                    )
+                )
+
+                nesting_depth = max([
+                    line.count("{")
+                    for line in content.splitlines()
+                ] + [0])
+
                 lines_of_code = len(
                     content.splitlines()
                 )
@@ -246,7 +265,10 @@ def analyze_semantics(repo_path):
                         file_functions * 2 +
                         file_imports * 1.5 +
                         file_async * 3 +
-                        file_classes * 2
+                        file_classes * 2 +
+                        conditional_count * 0.8 +
+                        loop_count * 1.2 +
+                        nesting_depth * 2
                     ),
 
                     2
@@ -260,6 +282,38 @@ def analyze_semantics(repo_path):
                 elif risk_score >= 40:
                     risk_level = "medium"
 
+                technical_debt_insights = []
+
+                if conditional_count >= 10:
+                    technical_debt_insights.append(
+                        "High conditional complexity detected"
+                    )
+
+                if nesting_depth >= 3:
+                    technical_debt_insights.append(
+                        "Deep nesting risk detected"
+                    )
+
+                if file_imports >= 10:
+                    technical_debt_insights.append(
+                        "Excessive dependency orchestration"
+                    )
+
+                if file_async >= 3:
+                    technical_debt_insights.append(
+                        "Async orchestration complexity detected"
+                    )
+
+                if lines_of_code >= 250:
+                    technical_debt_insights.append(
+                        "Large file maintainability risk"
+                    )
+
+                if file_functions >= 10:
+                    technical_debt_insights.append(
+                        "Potential god-component architecture"
+                    )
+
                 file_metrics.append({
 
                     "path": os.path.relpath(
@@ -271,6 +325,14 @@ def analyze_semantics(repo_path):
                     "imports": file_imports,
                     "async_functions": file_async,
                     "classes": file_classes,
+
+                    "conditional_count": conditional_count,
+                    "loop_count": loop_count,
+                    "nesting_depth": nesting_depth,
+
+                    "technical_debt_insights": (
+                        technical_debt_insights
+                    ),
 
                     "lines_of_code": lines_of_code,
 
