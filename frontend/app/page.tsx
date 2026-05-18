@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { motion } from "framer-motion";
+import CountUp from "react-countup";
 
 import EngineeringRadar from "../components/EngineeringRadar";
 import AnalysisPipeline from "../components/AnalysisPipeline";
@@ -191,7 +192,7 @@ export default function Home() {
                   Overall Score
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {(result as any)?.health_score?.overall ?? 0}
+                  <CountUp end={(result as any)?.health_score?.overall ?? 0} duration={2} decimals={1} />
                 </div>
               </div>
 
@@ -209,7 +210,7 @@ export default function Home() {
                   Functions
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {(result as any)?.analysis?.semantics?.functions ?? 0}
+                  <CountUp end={(result as any)?.analysis?.semantics?.functions ?? 0} duration={2} />
                 </div>
               </div>
 
@@ -218,7 +219,7 @@ export default function Home() {
                   React Components
                 </div>
                 <div className="text-4xl md:text-5xl xl:text-6xl font-bold mt-6">
-                  {(result as any)?.analysis?.semantics?.react_components ?? 0}
+                  <CountUp end={(result as any)?.analysis?.semantics?.react_components ?? 0} duration={2} />
                 </div>
               </div>
 
